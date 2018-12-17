@@ -1,40 +1,86 @@
-# Created by:
-# Justin Moser
+# SFT Tool
+# Hashing
+# Justin Moser, s1103774
+# Groep 4
 
+# Alle geïmporteerde libraries
 from py_essentials import hashing as hs
-from pprint import pprint
+import hashlib
 import os
+import platform
+import json
+from py_essentials import xcptns
 
-def hashingSHA1():
-    path = os.path.join("C:") # Pad is de C: schijf
-    hashtree = hs.createHashtree(path, 'sha1') # Van de directoy in 'path' wordt van alle onderliggende bestanden een sha1 hash berekend
-    with open('hashes.txt', 'w') as f: # De bestanden met de bijbehorende hashwaardes worden naar 'hashes.txt' geschreven
-        print(hashtree, file=f)
-    return hashtree
+# Genereert van elk bestand een hash
+def fileChecksum(filename, algorithm='sha1', printing=False):
+    if algorithm == "sha256":
+        hasher = hashlib.sha256()
+    elif algorithm == "sha512":
+        hasher = hashlib.sha512()
+    elif algorithm == "sha1":
+        hasher = hashlib.sha1()
+    else:
+        raise xcptns.UnsupportedHashingalgorithm("fileChecksum()", algorithm, ["sha1", "sha265", "sha512"])
+    try:
+        try:
+            with open(filename, 'rb') as afile:
+                buf = afile.read(65536)
+                while len(buf) > 0:
+                    hasher.update(buf)
+                    buf = afile.read(65536)
+            checksum = hasher.hexdigest()
+            if printing:
+                print(filename + " - " + checksum)
+            return checksum
+        except PermissionError:
+            return "ERROR"
+    except Exception as e:
+        raise xcptns.StrangeError("fileChecksum()", e)
 
-def hashingSHA256():
-    path = os.path.join("C:")  # Pad is de C: schijf
-    hashtree = hs.createHashtree(path, 'sha256') # Van de directoy in 'path' wordt van alle onderliggende bestanden een sha256 hash berekend
-    with open('hashes.txt', 'w') as f: # De bestanden met de bijbehorende hashwaardes worden naar 'hashes.txt' geschreven
-        print(hashtree, file=f)
-    return hashtree
+# return True als het bestand bestaat, anders False
+def isFile(object):
+    try:
+        os.listdir(object)
+        return False
+    except Exception:
+        return True
 
-def hashingSHA512():
-    path = os.path.join("C:")  # Pad is de C: schijf
-    hashtree = hs.createHashtree(path, 'sha512') # Van de directoy in 'path' wordt van alle onderliggende bestanden een sha512 hash berekend
-    with open('hashes.txt', 'w') as f: # De bestanden met de bijbehorende hashwaardes worden naar 'hashes.txt' geschreven
-        print(hashtree, file=f)
-    return hashtree
+# Maakt van de gehele directory, inclusief submappen en bestanden, een hash
+def createHashtree(directory, algorithm='sha1'):
+    if platform.system() == 'Windows':
+        slash = '\\'
+    directory = directory + slash
+    checksum = ''
+    jsonstring = '{'
+    objects = os.listdir(directory) # De objecten zijn de mappen en onderliggende mappen en bestanden
+    for i in range(0, len(objects)): # Deze loop wordt gedaan totdat alle objecten, dus alle mappen en bestanden voltooid zijn
+        filename = directory + objects[i]
+        if isFile(filename):
+            checksum = fileChecksum(filename, algorithm)
+            jsonstring = jsonstring + '"' + objects[i] + '":"' + str(checksum) + '",'
+        else:
+            if platform.system() == 'Windows':
+                slash = '\\'
+            jsonstring = jsonstring + '"' + objects[i] + '":' + createHashtree(directory + objects[i] + slash,
+                                                                               algorithm) + ','
+    if jsonstring[-1] == "{":
+        jsonstring = jsonstring + "}"
+    else:
+        jsonstring = jsonstring[:-1] + "}"
+    return jsonstring
 
-# De main klasse, pprint zorgt voor een 'Pretty-Print'
-def main():
-    print("De SHA1 hashwaardes zijn:")
-    pprint(hashingSHA1())
-    print("De SHA256 hashwaardes zijn:")
-    pprint(hashingSHA256())
-    print("De SHA512 hashwaardes zijn:")
-    pprint(hashingSHA512())
-
-# Voert de main functie uit
-if __name__ == '__main__':
-    main()
+# Voert het gehele programma uit
+if __name__ == "__main__":
+    directory = os.path.join("C:") # De gehele C: schijf wordt meegenomen
+    data = createHashtree(directory, "sha1")
+    data1 = createHashtree(directory, "sha256")
+    data2 = createHashtree(directory, "sha512")
+    data = json.loads(data)
+    data1 = json.loads(data1)
+    data2 = json.loads(data2)
+    print("De SHA-1 hashwaardes zijn:")
+    print(json.dumps(data, sort_keys=True, indent=4))
+    print("De SHA-256 hashwaardes zijn:")
+    print(json.dumps(data1, sort_keys=True, indent=4))
+    print("De SHA-512 hashwaardes zijn:")
+    print(json.dumps(data2, sort_keys=True, indent=4))
