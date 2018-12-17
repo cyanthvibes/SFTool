@@ -8,16 +8,22 @@ import os
 def hashingSHA1():
     path = os.path.join("C:") # Pad is de C: schijf
     hashtree = hs.createHashtree(path, 'sha1') # Van de directoy in 'path' wordt van alle onderliggende bestanden een sha1 hash berekend
+    with open('hashes.txt', 'w') as f: # De bestanden met de bijbehorende hashwaardes worden naar 'hashes.txt' geschreven
+        print(hashtree, file=f)
     return hashtree
 
 def hashingSHA256():
     path = os.path.join("C:")  # Pad is de C: schijf
     hashtree = hs.createHashtree(path, 'sha256') # Van de directoy in 'path' wordt van alle onderliggende bestanden een sha256 hash berekend
+    with open('hashes.txt', 'w') as f: # De bestanden met de bijbehorende hashwaardes worden naar 'hashes.txt' geschreven
+        print(hashtree, file=f)
     return hashtree
 
 def hashingSHA512():
     path = os.path.join("C:")  # Pad is de C: schijf
     hashtree = hs.createHashtree(path, 'sha512') # Van de directoy in 'path' wordt van alle onderliggende bestanden een sha512 hash berekend
+    with open('hashes.txt', 'w') as f: # De bestanden met de bijbehorende hashwaardes worden naar 'hashes.txt' geschreven
+        print(hashtree, file=f)
     return hashtree
 
 # De main klasse, pprint zorgt voor een 'Pretty-Print'
