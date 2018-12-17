@@ -2,6 +2,8 @@ from py_essentials import hashing as hs
 from pprint import pprint
 import os
 
+# Created by:
+# Justin Moser
 
 def hashingSHA1():
     path = os.path.join("C:") # Pad is de C: schijf
