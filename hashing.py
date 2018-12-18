@@ -1,7 +1,6 @@
 # SFT Tool
 # Hashing
 # Justin Moser, s1103774
-# Groep 4
 
 # Alle geïmporteerde libraries
 from py_essentials import hashing as hs
@@ -45,6 +44,7 @@ def isFile(object):
     except Exception:
         return True
 
+
 # Maakt van de gehele directory, inclusief submappen en bestanden, een hash
 def createHashtree(directory, algorithm='sha1'):
     if platform.system() == 'Windows':
@@ -69,9 +69,16 @@ def createHashtree(directory, algorithm='sha1'):
         jsonstring = jsonstring[:-1] + "}"
     return jsonstring
 
+# Schrijft alle bestanden en hashes naar een bestand 'hashes.txt'
+def writetoFile():
+    with open("hashes.txt", 'w') as f:
+        json.dump(data, f)
+        json.dump(data1, f)
+        json.dump(data2, f)
+
 # Voert het gehele programma uit
 if __name__ == "__main__":
-    directory = os.path.join("C:") # De gehele C: schijf wordt meegenomen
+    directory = os.path.join("C:", os.sep, "Users", "Justin Moser", "Desktop", "test") # De gehele C: schijf wordt meegenomen
     data = createHashtree(directory, "sha1")
     data1 = createHashtree(directory, "sha256")
     data2 = createHashtree(directory, "sha512")
@@ -84,3 +91,4 @@ if __name__ == "__main__":
     print(json.dumps(data1, sort_keys=True, indent=4))
     print("De SHA-512 hashwaardes zijn:")
     print(json.dumps(data2, sort_keys=True, indent=4))
+    writetoFile()
