@@ -44,7 +44,6 @@ def isFile(object):
     except Exception:
         return True
 
-
 # Maakt van de gehele directory, inclusief submappen en bestanden, een hash
 def createHashtree(directory, algorithm='sha1'):
     if platform.system() == 'Windows':
@@ -78,7 +77,7 @@ def writetoFile():
 
 # Voert het gehele programma uit
 if __name__ == "__main__":
-    directory = os.path.join("C:", os.sep, "Users", "Justin Moser", "Desktop", "test") # De gehele C: schijf wordt meegenomen
+    directory = os.path.join("C:") # De gehele C: schijf wordt meegenomen
     data = createHashtree(directory, "sha1")
     data1 = createHashtree(directory, "sha256")
     data2 = createHashtree(directory, "sha512")
