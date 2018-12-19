@@ -25,8 +25,6 @@ def initialize_database():
     c.execute("CREATE TABLE IF NOT EXISTS system_specifications(disk_name TEXT, serial_number REAL, file_fomat TEXT)")
     c.execute("CREATE TABLE IF NOT EXISTS case_information(case_name TEXT, investigator_name TEXT, path TEXT, "
               "time TEXT, task TEXT)")
-    # c.execute("CREATE TABLE IF NOT EXISTS virustotal(malware_name TEXT, malware_hash REAL)")
-    #  mogelijk geen bestand inladen van virustotal....
 
     conn.commit()   # commit the queries
     conn.close()    # close the connection with database
