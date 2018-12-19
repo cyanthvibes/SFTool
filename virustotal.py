@@ -37,7 +37,7 @@ def check_hash(hsh):
     try:
         if len(hsh) == 32:
             return hsh
-        elif len(hsh) == 40:
+        elif len(hsh) == 40: # SHA 1
             return hsh
         elif len(hsh) == 64:
             return hsh
@@ -124,3 +124,4 @@ def VT_Request(key, hash, output):
 # execute the program
 if __name__ == '__main__':
     main()
+
