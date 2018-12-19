@@ -71,8 +71,8 @@ def main():
     initialize_database()
 
     # test
-    # m1 = Malware('hoi', '1234123', '/pad/', '2018')
-    # m2 = Malware('doei', '45643', '/niiew/', '2019')
+    # m1 = Malware('test1', '123456', '/pad/', '2018')
+    # m2 = Malware('test2', '456789', '/pad/', '2019')
     # list = [m1, m2]
 
     # insert_data_malware_detection(malware_data)   # input a list in the function
