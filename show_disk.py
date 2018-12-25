@@ -1,6 +1,8 @@
 # SFT Tool
 # Justin Moser, s1103774
 
+# pip install pypiwin32
+# pip install wmi
 import wmi
 
 def showDisk():
