@@ -1,31 +1,32 @@
-"""
--------------------------------------------------------------------------------
-Copyright 2015 Destruct_Icon
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-       http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
--------------------------------------------------------------------------------
-http://www.malwerewolf.com/
-Author: Destruct_Icon, nanoSpl0it
-Version: 1.0
-Summary: Queries Virus Total for all reports of the hashes provided.
-"""
+# Mariska Temming, S1106242
+
+import json
 import requests
-import argparse
 import os
 import time
 
 
-def checkkey(kee):
+class Virustotal:
+    def __init__(self, hash, key, output):
+        self.hash = hash
+        self.key = key
+        self.output = output
+
+    def get_hash(self):
+        return self.hash
+
+    def get_key(self):
+        return self.key
+
+    def get_output(self):
+        return self.output
+
+
+# checks if key is valid
+def checkkey(key):
     try:
-        if len(kee) == 64:
-            return kee
+        if len(key) == 64:
+            return key
         else:
             print("There is something wrong with your key. Not 64 Alpha Numeric characters.")
             exit()
@@ -33,14 +34,15 @@ def checkkey(kee):
         print(e)
 
 
-def check_hash(hsh):
+# checks if hashes appear valid
+def check_hash(hash):
     try:
-        if len(hsh) == 32:
-            return hsh
-        elif len(hsh) == 40: # SHA 1
-            return hsh
-        elif len(hsh) == 64:
-            return hsh
+        if len(hash) == 32:     # MD5
+            return hash
+        elif len(hash) == 40:    # SHA-1
+            return hash
+        elif len(hash) == 64:   # SHA-256
+            return hash
         else:
             print("The Hash input does not appear valid.")
             exit()
@@ -59,69 +61,55 @@ def file_exists(filepath):
         print(e)
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Query hashes against Virus Total.")
-    parser.add_argument('-i', '--input', type=file_exists, required=False,
-                        help='Input File Location EX: /Desktop/Somewhere/input.txt')
-    parser.add_argument('-o', '--output', required=True, help='Output File Location EX: /Desktop/Somewhere/output.txt ')
-    parser.add_argument('-H', '--hash', type=check_hash, required=False,
-                        help='Single Hash EX: d41d8cd98f00b204e9800998ecf8427e')
-    parser.add_argument('-k', '--key', type=checkkey, required=True, help='VT API Key EX: ASDFADSFDSFASDFADSFDSFADSF')
-    parser.add_argument('-u', '--unlimited', action='store_const', const=1, required=False,
-                        help='Changes the 26 second sleep timer to 1.')
-    args = parser.parse_args()
+def get_malware_name(key, hash):
+    json_response = []
 
-    # Run for a single hash + key
-    if args.hash and args.key:
-        file = open(args.output, 'w+')
-        file.write('Below is the identified malicious file.\n\n')
-        file.close()
-        VT_Request(args.key, args.hash.rstrip(), args.output)
-    # Run for an input file + key
-    elif args.input and args.key:
-        file = open(args.output, 'w+')
-        file.write('Below are the identified malicious files.\n\n')
-        file.close()
-        with open(args.input) as o:
-            for line in o.readlines():
-                VT_Request(args.key, line.rstrip(), args.output)
-                if args.unlimited == 1:
-                    time.sleep(1)
-                else:
-                    time.sleep(26)
-
-
-def VT_Request(key, hash, output):
     params = {'apikey': key, 'resource': hash}
     url = requests.get('https://www.virustotal.com/vtapi/v2/file/report', params=params)
-    json_response = url.json()
-    print(json_response)
-    response = int(json_response.get('response_code'))
-    if response == 0:
-        print(hash + ' is not in Virus Total')
-        file = open(output, 'a')
-        file.write(hash + ' is not in Virus Total')
-        file.write('\n')
-        file.close()
-    elif response == 1:
-        positives = int(json_response.get('positives'))
-        if positives == 0:
-            print(hash + ' is not malicious')
-            file = open(output, 'a')
-            file.write(hash + ' is not malicious')
-            file.write('\n')
-            file.close()
+    try:
+        json_response = url.json()
+    except json.decoder.JSONDecodeError as e:
+        print(e)
+    print("json: " + str(json_response))
+
+    if json_response != []:
+        response = int(json_response.get('response_code'))
+
+        if response == 0:
+            print(hash + ' is not in Virus Total')
+            result = None
+        elif response == 1:
+            positives = int(json_response.get('positives'))
+            if positives == 0:
+                print(hash + ' is not malicious')
+                result = None
+            else:
+                print(hash + ' is malicious')
+                result = json_response["scans"]["F-Secure"]["result"]
         else:
-            print(hash + ' is malicious')
-            file = open(output, 'a')
-            file.write(hash + ' is malicious. Hit Count:' + str(positives))
-            file.write('\n')
-            file.close()
+            print(hash + ' could not be searched. Please try again later.')
+            result = None
     else:
-        print(hash + ' could not be searched. Please try again later.')
+        result = None
+
+    return result
 
 
-# execute the program
+def main():
+    input_file = 'malware_hashes.txt'
+    file_exists(input_file)
+    key = '672e7867c8c51efca05872894e865a92630883316d06d9d73b9284bc92977dd5'
+    checkkey(key)
+
+    with open(input_file) as malware_hashes:  # open text file with malware hashes and close automatically
+        for line in malware_hashes.readlines():
+            print("malware name: " + str(get_malware_name(key, line.rstrip())))
+            check_hash(line.rstrip())
+
+            # hier schrijven naar de database
+
+            time.sleep(5)  # 4 requests to VirusTotal per minut, so there is a sleep needed
+
+
 if __name__ == '__main__':
     main()
-
