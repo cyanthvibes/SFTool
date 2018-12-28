@@ -108,7 +108,7 @@ def main():
 
             # hier schrijven naar de database
 
-            time.sleep(5)  # 4 requests to VirusTotal per minut, so there is a sleep needed
+            time.sleep(15)  # 4 requests to VirusTotal per minut, so there is a sleep needed
 
 
 if __name__ == '__main__':
