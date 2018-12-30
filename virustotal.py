@@ -4,6 +4,9 @@ import json
 import requests
 import os
 import time
+import datetime
+from code.malware import Malware
+from code.database_helper import insert_data_malware_detection
 
 
 class Virustotal:
@@ -23,31 +26,25 @@ class Virustotal:
 
 
 # checks if key is valid
-def checkkey(key):
-    try:
-        if len(key) == 64:
-            return key
-        else:
-            print("There is something wrong with your key. Not 64 Alpha Numeric characters.")
-            exit()
-    except Exception as e:
-        print(e)
+def is_valid_key(key):
+    if len(key) == 64:
+        return True
+    else:
+        print("This key is not valid.")
+        return False
 
 
 # checks if hashes appear valid
-def check_hash(hash):
-    try:
-        if len(hash) == 32:     # MD5
-            return hash
-        elif len(hash) == 40:    # SHA-1
-            return hash
-        elif len(hash) == 64:   # SHA-256
-            return hash
-        else:
-            print("The Hash input does not appear valid.")
-            exit()
-    except Exception as e:
-        print(e)
+def is_valid_hash(hash):
+    if len(hash) == 32:     # MD5
+        return True
+    elif len(hash) == 40:    # SHA-1
+        return True
+    elif len(hash) == 64:   # SHA-256
+        return True
+    else:
+        print("The Hash: " + hash + " input does not appear to be valid.")
+        return False
 
 
 def file_exists(filepath):
@@ -95,20 +92,27 @@ def get_malware_name(key, hash):
     return result
 
 
-def main():
+def register_malware_to_database():
     input_file = 'malware_hashes.txt'
     file_exists(input_file)
     key = '672e7867c8c51efca05872894e865a92630883316d06d9d73b9284bc92977dd5'
-    checkkey(key)
 
-    with open(input_file) as malware_hashes:  # open text file with malware hashes and close automatically
-        for line in malware_hashes.readlines():
-            print("malware name: " + str(get_malware_name(key, line.rstrip())))
-            check_hash(line.rstrip())
+    if is_valid_key(key):
+        with open(input_file) as malware_hashes:  # open text file with malware hashes and close automatically
+            for line in malware_hashes.readlines():
+                hash = line.rstrip()
+                if is_valid_hash(hash):
+                    time_detection = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+                    malware_name = str(get_malware_name(key, line.rstrip()))
+                    path = ''
+                    malware = Malware(malware_name, hash, path, time_detection)
+                    insert_data_malware_detection(malware)
 
-            # hier schrijven naar de database
+                time.sleep(15)  # 4 requests to VirusTotal per minut, so there is a sleep needed
 
-            time.sleep(15)  # 4 requests to VirusTotal per minut, so there is a sleep needed
+
+def main():
+    register_malware_to_database()
 
 
 if __name__ == '__main__':
