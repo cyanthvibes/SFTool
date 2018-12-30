@@ -1,6 +1,6 @@
-import sqlite3
+# Mariska Temming, S1106242
 
-from database.malware import Malware
+import sqlite3
 
 
 def get_connection(db_file):
@@ -26,20 +26,19 @@ def initialize_database():
     c.execute("CREATE TABLE IF NOT EXISTS case_information(case_name TEXT, investigator_name TEXT, path TEXT, "
               "time TEXT, task TEXT)")
 
-    conn.commit()   # commit the queries
-    conn.close()    # close the connection with database
+    conn.commit()  # commit the queries
+    conn.close()  # close the connection with database
     print("Database initialized.")
 
     return None
 
 
-def insert_data_malware_detection(malware_data):
+def insert_data_malware_detection(malware):
     conn = get_connection("SFT.db")
     c = conn.cursor()
 
-    for item in malware_data:
-        c.execute("INSERT INTO malware_detection(name, hash, path, time_detection) "
-                  "VALUES(?, ?, ?, ?)", (item.get_name(), item.get_hash(), item.get_path(), item.get_time()))
+    c.execute("INSERT INTO malware_detection(name, hash, path, time_detection) "
+              "VALUES(?, ?, ?, ?)", (malware.get_name(), malware.get_hash(), malware.get_path(), malware.get_time()))
     conn.commit()
     conn.close()
 
