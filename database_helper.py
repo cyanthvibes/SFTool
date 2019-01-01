@@ -1,4 +1,7 @@
-# Mariska Temming, S1106242
+"""
+Author: Mariska Temming, S1106242
+Summary: The database_helper initialize the database (three tables) and execute queries (insert data into the database)
+"""
 
 import sqlite3
 
@@ -22,9 +25,9 @@ def initialize_database():
 
     # create four tables into database
     c.execute("CREATE TABLE IF NOT EXISTS malware_detection(name TEXT, hash REAL, path TEXT, time_detection TEXT)")
-    c.execute("CREATE TABLE IF NOT EXISTS system_specifications(disk_name TEXT, serial_number REAL, file_fomat TEXT)")
-    c.execute("CREATE TABLE IF NOT EXISTS case_information(case_name TEXT, investigator_name TEXT, path TEXT, "
-              "time TEXT, task TEXT)")
+    c.execute("CREATE TABLE IF NOT EXISTS system_specifications(serial_number TEXT, disk_name TEXT, file_fomat TEXT)")
+    c.execute("CREATE TABLE IF NOT EXISTS case_information(case_name TEXT, start_number REAL, investigator_name TEXT, "
+              "comment TEXT, time TEXT)")
 
     conn.commit()  # commit the queries
     conn.close()  # close the connection with database
@@ -43,13 +46,14 @@ def insert_data_malware_detection(malware):
     conn.close()
 
 
-def insert_data_system_specifications(system_data):
+def insert_data_system_specifications(system_specs):
     conn = get_connection("SFT.db")
     c = conn.cursor()
 
-    for item in system_data:
-        c.execute("INSERT INTO system_specifications(disk_name, serial_number, file_fomat) "
-                  "VALUES(?, ?, ?, ?)", (item.get_disk_name(), item.get_serial_number(), item.get_file_fomat()))
+    c.execute("INSERT INTO system_specifications(serial_number, disk_name, file_fomat) "
+              "VALUES(?, ?, ?)", (system_specs.get_serial_number(), system_specs.get_disk_name(),
+                                  system_specs.get_file_fomat()))
+
     conn.commit()
     conn.close()
 
@@ -58,25 +62,36 @@ def insert_data_case_information(case_data):
     conn = get_connection("SFT.db")
     c = conn.cursor()
 
-    for item in case_data:
-        c.execute("INSERT INTO case_information(case_name, investigator_name, path, time, time) "
-                  "VALUES(?, ?, ?, ?)", (item.get_case_name(), item.get_investigator_name(), item.get_path(),
-                                         item.get_time(), item.get_task))
+    c.execute("INSERT INTO case_information(case_name, start_number, investigator_name, comment, time) "
+              "VALUES(?, ?, ?, ?, ?)", (case_data.get_case_name(), case_data.get_start_number(),
+                                        case_data.get_investigator_name(), case_data.get_comment(),
+                                        case_data.get_time()))
+    conn.commit()
+    conn.close()
+
+
+def select_database():
+    conn = get_connection("SFT.db")
+    c = conn.cursor()
+
+    print("\n" + "Table: case_information")
+    for row in c.execute("SELECT * FROM case_information"):
+        print(row)
+
+    print("\n" + "Table: system_specifications")
+    for row in c.execute("SELECT * FROM system_specifications"):
+        print(row)
+
+    print("\n" + "Table: malware_detection")
+    for row in c.execute("SELECT * FROM malware_detection"):
+        print(row)
+
     conn.commit()
     conn.close()
 
 
 def main():
     initialize_database()
-
-    # test
-    # m1 = Malware('test1', '123456', '/pad/', '2018')
-    # m2 = Malware('test2', '456789', '/pad/', '2019')
-    # list = [m1, m2]
-
-    # insert_data_malware_detection(malware_data)   # input a list in the function
-    # insert_data_system_specifications(system_data)    # input a list in the function
-    # insert_data_case_information(case_data)   # input a list in the function
 
 
 if __name__ == '__main__':
