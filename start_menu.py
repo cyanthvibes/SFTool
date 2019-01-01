@@ -1,15 +1,24 @@
+"""
+Author: Mariska Temming, S1106242
+Summary: The database_helper initialize the database (three tables) and execute queries (insert data into the database)
+"""
+
 import PySimpleGUI as sg
 import datetime
+from SFTool.case import Case
+from SFTool.database_helper import insert_data_case_information
+from SFTool.database_helper import select_database
 
 
 def view_database():
-    print("view database")
+    select_database()
     return None
 
 
 def scan_malware():
     print("scan malware")
     sg.PopupOK('SFT is scanning malware')
+    # hier main aanroepen?
     return None
 
 
@@ -29,25 +38,28 @@ def show_window():
          sg.Button('Scan Malware', size=(11, 4), font=('Arial', 20), pad=(0, 0))]
     ]
 
-    # Show the Window to the user
-    window = sg.Window('SFT - Start menu').Layout(layout)
-    # event, values = window.Read()
-    # print(event, values['_CASE_NAME_'], values['_START_NUMBER'], values['_INVESTIGATOR_'], values['_COMMENT_'])
+    window = sg.Window('SFT - Start menu').Layout(layout)   # Show the Window to the user
 
     while True:
-        # Read the Window
-        event, value = window.Read()
+        event, value = window.Read()    # Read the Window
         # Take appropriate action based on button
         if event == 'View Database':
             view_database()
         elif event == 'Scan Malware':
             scan_malware()
         elif event == 'Submit':
-            timeformat = '%Y-%m-%d-%H-%M-%S'
-            print("Time: " + datetime.datetime.now().strftime(timeformat))
-            print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + value['_CASE_NAME_'] + "\n", "Start Number: " + "\t" +
-                  value['_START_NUMBER'] + "\n", "Investigator: " + "\t" + value['_INVESTIGATOR_'] + "\n", "Comment: " +
-                  "\t" + "\t" + value['_COMMENT_'])
+            case_name = value['_CASE_NAME_']
+            start_number = value['_START_NUMBER']
+            investigator_name = value['_INVESTIGATOR_']
+            comment = value['_COMMENT_']
+            time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+
+            print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+            print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + case_name + "\n", "Start Number: " + "\t" +
+                  start_number + "\n", "Investigator: " + "\t" + investigator_name + "\n", "Comment: " +
+                  "\t" + "\t" + comment)
+            case_data = Case(case_name, start_number, investigator_name, comment, time)
+            insert_data_case_information(case_data)     # write case information to database
         elif event == 'Quit' or event is None:
             window.Close()
             break
