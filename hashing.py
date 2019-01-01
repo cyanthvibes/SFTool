@@ -1,7 +1,9 @@
 """
 
-Author: Justin Moser, S1103774
-Summary: Making hashes of all the files on a system
+Author:  Justin Moser, S1103774
+Summary: Making MD5 hashes of all the files on a system
+         Storing file paths and hashes in a CSV-file
+         Storing hashes in a TXT-file
 
 """
 
@@ -10,39 +12,42 @@ import os
 import sys
 import win32api # pip install pypiwin32
 import ctypes
+import csv
 
 drives = win32api.GetLogicalDriveStrings()  # Berekend het aantal schijven
 drives = drives = drives.split('\000')[:-1]
 
-def calculate_hashes():
+def get_pathname_and_hashes(): #
     for drive in drives: # Voor elke schijf in het systeem wordt de loop uitgevoerd
 
         for root, dirs, files in os.walk(drive, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
-            files = [fi for fi in files if not fi.endswith(('.sys', '.dll'))]
 
-            for name in files:
+            for name in files: # Voor elk bestand wordt de loop uitgevoerd
                 filename = (os.path.join(root, name))
                 blocksize = 65536
-                hasher = hashlib.sha1() # Berekend een SHA1 hashwaarde
+                hash_dict = dict([(root, hashlib.md5(open(filename, 'rb').read()).hexdigest())]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                print(hash_dict) # Zodat er kan worden gezien of het werkt
 
-                with open(filename, 'rb') as afile:
-                    buf = afile.read(65536)
-                    hasher.update(buf)
-                    checksum = hasher.hexdigest()
-                    print(checksum)
+                with open('Test.csv', 'a') as f: # Er wordt een CSV-bestand geopend
+                    writer = csv.writer(f)
+                    for key, value in hash_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
+                        writer.writerow([key, value])
 
-                with open("hashes.txt", "a") as of: # Opent 'hashes.txt' als output file
-                    of.write(checksum + "\n") # Print alle hashes naar 'hashes.txt', elke waarde op één lijn
+                with open('Hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
+                    for value in hash_dict.values(): # Elke value (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                        e.write('{}\n'.format(value))
 
-def is_admin(): # Checkt of de gebruiker Admin-rechten heeft
+    return hash_dict
+
+def is_admin(): # Controleerd of de gebruiker Admin-rechten heeft
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
     except:
         return False
 
 def main():
-    if is_admin():
-        calculate_hashes()
+    if is_admin(): # Als de gebruiker Admin-rechten heeft, dan wordt het programma uitgevoerd
+        get_pathname_and_hashes()
     else:
         ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
 
