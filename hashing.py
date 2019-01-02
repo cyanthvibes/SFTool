@@ -21,35 +21,28 @@ def get_pathname_and_hashes(): #
     for drive in drives: # Voor elke schijf in het systeem wordt de loop uitgevoerd
 
         for root, dirs, files in os.walk(drive, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
+            try:
+                for name in files: # Voor elk bestand wordt de loop uitgevoerd
+                    filename = (os.path.join(root, name))
+                    blocksize = 65536
+                    hash_dict = dict([(filename, hashlib.md5(open(filename, 'rb').read()).hexdigest())]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                    print(hash_dict) # Zodat er kan worden gezien of het werkt
 
-            for name in files: # Voor elk bestand wordt de loop uitgevoerd
-                filename = (os.path.join(root, name))
-                blocksize = 65536
-                hash_dict = dict([(root, hashlib.md5(open(filename, 'rb').read()).hexdigest())]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
-                print(hash_dict) # Zodat er kan worden gezien of het werkt
+                    with open('Test.csv', 'a') as f: # Er wordt een CSV-bestand geopend
+                        writer = csv.writer(f)
+                        for key, value in hash_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
+                            writer.writerow([key, value])
 
-                with open('Test.csv', 'a') as f: # Er wordt een CSV-bestand geopend
-                    writer = csv.writer(f)
-                    for key, value in hash_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
-                        writer.writerow([key, value])
-
-                with open('Hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
-                    for value in hash_dict.values(): # Elke value (de hashes) in hash_dict worden naar dit bestand toegeschreven
-                        e.write('{}\n'.format(value))
+                    with open('Hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
+                        for value in hash_dict.values(): # Elke value (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                            e.write('{}\n'.format(value))
+            except (IOError, PermissionError, FileNotFoundError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
+                print(x)
 
     return hash_dict
-
-def is_admin(): # Controleerd of de gebruiker Admin-rechten heeft
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
-
+  
 def main():
-    if is_admin(): # Als de gebruiker Admin-rechten heeft, dan wordt het programma uitgevoerd
-        get_pathname_and_hashes()
-    else:
-        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+    get_pathname_and_hashes()
 
 if __name__ == '__main__':
     main()
