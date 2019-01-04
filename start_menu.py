@@ -126,19 +126,6 @@ def show_window():
                 print(result)
                 status_mode.Update(result)  # update the status of the SFTool in the GUI
 
-            else:
-                print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
-                print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + case_name + "\n", "Start Number: " + "\t" +
-                      start_number + "\n", "Investigator: " + "\t" + investigator_name + "\n", "Comment: " +
-                      "\t" + "\t" + comment)
-
-                case_data = Case(case_name, start_number, investigator_name, comment, time)
-                insert_data_case_information(case_data)     # write case information to database
-
-                result = scan_malware()
-                print(result)
-                status_mode.Update(result)  # update the status of the SFTool in the GUI
-
         elif event == 'Quit' or event is None:
             window.Close()
             break
