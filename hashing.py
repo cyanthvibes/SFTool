@@ -28,18 +28,19 @@ def get_pathname_and_hashes(): #
             try:
                 for name in files: # Voor elk bestand wordt de loop uitgevoerd
                     filename = (os.path.join(root, name))
-                    blocksize = 65536
-                    path_dict = dict([(filename, hashlib.md5(open(filename, 'rb').read()).hexdigest())]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
-                    print(path_dict) # Zodat er kan worden gezien of het werkt
+                    if os.path.getsize(filename) <= 1000000: # Voer de loop uit als de bestanden kleiner of gelijk zijn aan 10MB (voor demo)
+                        blocksize = 65536
+                        path_dict = dict([(filename, hashlib.md5(open(filename, 'rb').read()).hexdigest())]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                        print(path_dict) # Zodat er kan worden gezien of het werkt
 
-                    with open('path_and_hash.csv', 'a') as f: # Er wordt een CSV-bestand geopend
-                        writer = csv.writer(f)
-                        for key, value in path_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
-                            writer.writerow([key, value])
+                        with open('path_and_hash.csv', 'a') as f: # Er wordt een CSV-bestand geopend
+                            writer = csv.writer(f)
+                            for key, value in path_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
+                                writer.writerow([key, value])
 
-                    with open('system_hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
-                        for value in path_dict.values(): # Elke value (de hashes) in hash_dict worden naar dit bestand toegeschreven
-                            e.write('{}\n'.format(value))
+                        with open('system_hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
+                            for value in path_dict.values(): # Elke value (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                                e.write('{}\n'.format(value))
             except (IOError, PermissionError, MemoryError, FileNotFoundError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
                 print(x)
 
