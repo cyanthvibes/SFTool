@@ -3,7 +3,7 @@ Author: Mariska Temming, S1106242
 Summary: This startmenu shows the user interface of the SFTool and start the SFTool. 
 """
 
-import PySimpleGUI as sg
+import PySimpleGUI as sg    # pip install PySimpleGUI
 import datetime
 from SFTool.case import Case
 from SFTool.database_helper import insert_data_case_information
@@ -11,7 +11,25 @@ from SFTool.database_helper import select_database
 
 from SFTool.sys_specs import register_system_specs_to_database
 from SFTool.hashing import get_pathname_and_hashes
+from SFTool.network_checker import internet_on
 from SFTool.virustotal import register_malware_to_database
+
+
+# from threading import Thread
+# from time import sleep
+#
+#
+# def threaded_function(arg):
+#     for i in range(arg):
+#         print("running")
+#         sleep(1)
+#
+#
+# def thread_main():
+#     thread = Thread(target = threaded_function, args = (10, ))
+#     thread.start()
+#     thread.join()
+#     print("thread finished...exiting")
 
 
 def view_database():
@@ -30,13 +48,17 @@ def scan_malware():
         get_pathname_and_hashes()
         print('calculating hashes... ')
 
-        # virusshare()  # virusshare script aanroepen
-        print('Detecting malware in VirusShare... ')
+        # check if the system has an connection to the internet
+        if internet_on():
+            # virusshare()  # virusshare script aanroepen
+            print('Detecting malware in VirusShare... ')
+            register_malware_to_database()  # virustotal script aanroepen
+            print('Checking malware name in VirusTotal... ')
+        elif not internet_on():
+            # virusshare()  # virusshare script aanroepen
+            print('Detecting malware in VirusShare... ')
 
-        register_malware_to_database()  # virustotal script aanroepen
-        print('Checking malware name in VirusTotal... ')
-
-        # kopie malware()
+        # kopie_malware()
         print('Coping malware to USB drive..')
 
         print('The malware scan is finished!')
@@ -50,10 +72,11 @@ def scan_malware():
 
 def show_window():
     status_mode = sg.Text('...', size=(20, 1), font=('Arial', 14), text_color='red')
+    empty_row = sg.Text('', size=(1, 1))
     # create buttons
-    start_malware = sg.Button('Start malware scan', size=(15, 4), font=('Arial', 20), pad=(0, 0))
-    view_databasee = sg.Button('View Database', size=(11, 4), font=('Arial', 20), pad=(0, 0))
-    quit_startmenu = sg.Button('Quit', size=(3, 4), font=('Arial', 20), pad=(0, 0))
+    start_malware = sg.Button('Start malware scan', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'), enable_events=True, )
+    view_databasee = sg.Button('View Database', size=(13, 1), font=('Arial', 18), button_color=('black', 'white'))
+    quit_startmenu = sg.Button('Quit', size=(5, 1), font=('Arial', 18), button_color=('black', 'white'))
 
     # Layout the design of the GUI
     layout = [
@@ -64,7 +87,10 @@ def show_window():
          sg.InputText(key='_INVESTIGATOR_', font=('Arial', 14))],
         [sg.Text('Comment:', size=(13, 1), font=('Arial', 14)), sg.InputText(key='_COMMENT_', font=('Arial', 14))],
         [sg.Text('Status: ', size=(13, 1), font=('Arial', 14)), status_mode],
-        [view_databasee, quit_startmenu, start_malware]
+        [empty_row],
+        [empty_row],
+        [view_databasee, empty_row, quit_startmenu, empty_row, start_malware],
+        [empty_row]
     ]
 
     window = sg.Window('SFT - Start menu').Layout(layout)   # Show the Window to the user
@@ -74,29 +100,29 @@ def show_window():
         # Take appropriate action based on button
         if event == 'View Database':
             # start_malware.Update(button_color='red')
-
             view_database()
 
         elif event == 'Start malware scan':
-            # start_malware.Update(button_color='blue')
-
             case_name = value['_CASE_NAME_']
             start_number = value['_START_NUMBER']
             investigator_name = value['_INVESTIGATOR_']
             comment = value['_COMMENT_']
             time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
-            print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
-            print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + case_name + "\n", "Start Number: " + "\t" +
-                  start_number + "\n", "Investigator: " + "\t" + investigator_name + "\n", "Comment: " +
-                  "\t" + "\t" + comment)
+            if case_name or start_number or investigator_name == '':
+                print("Vul de gegevens in het startscherm.")
+            else:
+                print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+                print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + case_name + "\n", "Start Number: " + "\t" +
+                      start_number + "\n", "Investigator: " + "\t" + investigator_name + "\n", "Comment: " +
+                      "\t" + "\t" + comment)
 
-            case_data = Case(case_name, start_number, investigator_name, comment, time)
-            insert_data_case_information(case_data)     # write case information to database
+                case_data = Case(case_name, start_number, investigator_name, comment, time)
+                insert_data_case_information(case_data)     # write case information to database
 
-            result = scan_malware()
-            print(result)
-            status_mode.Update(result)
+                result = scan_malware()
+                print(result)
+                status_mode.Update(result)  # update the status of the SFTool in the GUI
 
         elif event == 'Quit' or event is None:
             window.Close()
