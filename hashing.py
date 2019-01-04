@@ -1,6 +1,7 @@
 """
 
 Author:  Justin Moser, S1103774
+
 Summary: - get_pathname_and_hashes function
                 Making MD5 hashes of all the files on a system
                 Storing file paths and MD5 hashes in a CSV-file
@@ -29,7 +30,8 @@ def get_pathname_and_hashes(): #
                     filename = (os.path.join(root, name))
                     if os.path.getsize(filename) <= 10: # Voer de loop uit als de bestanden kleiner of gelijk zijn aan 10MB (voor demo)
                         blocksize = 65536
-                        path_dict = dict([(filename, hashlib.md5(open(filename, 'rb').read()).hexdigest())]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                        # path_dict2 = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)])
+                        path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
                         print(path_dict) # Zodat er kan worden gezien of het werkt
 
                         with open('path_and_hash.csv', 'a') as f: # Er wordt een CSV-bestand geopend
@@ -49,20 +51,26 @@ def get_pathname_and_hashes(): #
 def convert_md5_to_sha1():
     with open('path_and_hash.csv', 'r') as e: # Het bestand met de padnamen en MD5 hashes wordt geopend
         path_dict = dict(filter(None, csv.reader(e))) # Het CSV-bestand wordt omgezet in een dictionary
-
+        
     lines = [line.rstrip('\n') for line in open('virusshare_matches.txt')]  # Het bestand met daarin de MD5 matches van Virusshare wordt hier geopend
+
+    print(path_dict)
 
     for key, value in path_dict.items():
         padnaam = key
         hash = value
         filename = os.path.join(padnaam)
         if hash in lines:
+            print(hash)
+            print(padnaam)
             checksum = hashlib.sha1(filename.encode('utf-8')).hexdigest()  # Er wordt een SHA1-hash berekend van het bestand in het opgegeven pad
             with open('malware_hashes.txt', 'a') as f:  # Er wordt een TXT-bestand geopend
                 f.write('{}\n'.format(checksum)) # De SHA1-hashes van geïnfecteerde bestanden wordt hier naartoe geschreven
 
+
 def main():
-   convert_md5_to_sha1()
+    # get_pathname_and_hashes()
+    convert_md5_to_sha1()
 
 if __name__ == '__main__':
     main()
