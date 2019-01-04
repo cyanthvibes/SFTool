@@ -5,8 +5,8 @@ import requests
 import os
 import time
 import datetime
-from code.malware import Malware
-from code.database_helper import insert_data_malware_detection
+from SFTool.malware import Malware
+from SFTool.database_helper import insert_data_malware_detection
 
 
 class Virustotal:
