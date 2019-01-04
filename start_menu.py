@@ -109,21 +109,22 @@ def show_window():
             comment = value['_COMMENT_']
             time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
-            if case_name or start_number or investigator_name == '':
-                print("Vul de gegevens in het startscherm.")
-                if case_name and start_number and investigator_name != '':
-                    print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
-                    print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + case_name + "\n",
-                          "Start Number: " + "\t" +
-                          start_number + "\n", "Investigator: " + "\t" + investigator_name + "\n", "Comment: " +
-                          "\t" + "\t" + comment)
+            if case_name == '' or start_number == '' or investigator_name == '':
+                print("Vul de case gegevens in het startscherm.")
+                sg.Popup("Vul de case gegevens in het startscherm.")
+            else:
+                print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+                print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + case_name + "\n",
+                      "Start Number: " + "\t" +
+                      start_number + "\n", "Investigator: " + "\t" + investigator_name + "\n", "Comment: " +
+                      "\t" + "\t" + comment)
 
-                    case_data = Case(case_name, start_number, investigator_name, comment, time)
-                    insert_data_case_information(case_data)  # write case information to database
+                case_data = Case(case_name, start_number, investigator_name, comment, time)
+                insert_data_case_information(case_data)  # write case information to database
 
-                    result = scan_malware()
-                    print(result)
-                    status_mode.Update(result)  # update the status of the SFTool in the GUI
+                result = scan_malware()
+                print(result)
+                status_mode.Update(result)  # update the status of the SFTool in the GUI
 
             else:
                 print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
