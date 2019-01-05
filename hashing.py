@@ -65,7 +65,6 @@ def convert_md5_to_sha1():
             checksum = hashlib.sha1(filename.encode('utf-8')).hexdigest()  # Er wordt een SHA1-hash berekend van het bestand in het opgegeven pad
             with open('malware_hashes.txt', 'a') as f:  # Er wordt een TXT-bestand geopend
                 f.write('{}\n'.format(checksum)) # De SHA1-hashes van geïnfecteerde bestanden wordt hier naartoe geschreven
-            print(padnaam)
             print(checksum)
 
 # Omschrijving staat in de summary
