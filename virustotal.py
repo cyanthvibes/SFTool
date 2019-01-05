@@ -1,12 +1,15 @@
 # Mariska Temming, S1106242
 
 import json
-import requests
+import requests     # pip install requests
 import os
 import time
 import datetime
+import csv
 from SFTool.malware import Malware
 from SFTool.database_helper import insert_data_malware_detection
+
+from SFTool.get_path_malware import get_malware_path
 
 
 class Virustotal:
@@ -105,9 +108,11 @@ def register_malware_to_database():
                     time_detection = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
                     malware_name = str(get_malware_name(key, line.rstrip()))
                     path = ''
+                    with open('malware_sha_path.csv', 'r') as e:  # opens file with path and sha1 hashes
+                        path_dict = dict(filter(None, csv.reader(e)))  # convert CSV-file to dictionary
+                        path = path_dict.get(hash)  # if the hash exists then get the path of that hash
                     malware = Malware(malware_name, hash, path, time_detection)
                     insert_data_malware_detection(malware)
-
                 time.sleep(15)  # 4 requests to VirusTotal per minut, so there is a sleep needed
 
 
@@ -117,3 +122,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
