@@ -8,15 +8,14 @@ Summary: - compare_hashes
 
 """
 
-from difflib import Differ
-
+# Omschrijving van de functie staat in de summary
 def compare_hashes():
     with open('virusshare_hashes.txt') as f1, open('system_hashes.txt') as f2: # Opent 'virusshare_hashes.txt' en 'system_hashes.txt"
         for l1, l2 in zip(f1, f2):
-            if l1 == l2: # Als de regels overeenkomen, doen dat het volgende:
+            if l2 == l1: # Als de regels overeenkomen, doe dat het volgende:
                 with open("virusshare_matches.txt", 'a') as e: # Open het 'virusshare_matches.txt'
-                    e.write(l1)
-            print(l1)
+                    e.write(l2) # Schrijf de overeenkomende hash naar het bestand
+    return l2
 
 def main():
     compare_hashes()
