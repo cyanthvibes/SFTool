@@ -49,23 +49,6 @@ def get_pathname_and_hashes(): #
 
     return path_dict
 
-# Omschrijving van de functie staat in de summary
-def convert_md5_to_sha1():
-    with open('path_and_hash.csv', 'r') as e: # Het bestand met de padnamen en MD5 hashes wordt geopend
-        path_dict = dict(filter(None, csv.reader(e))) # Het CSV-bestand wordt omgezet in een dictionary
-
-    lines = [line.rstrip('\n') for line in open('virusshare_matches.txt')]  # Het bestand met daarin de MD5 matches van Virusshare wordt hier geopend
-
-    for key, value in path_dict.items():
-        padnaam = key
-        hash = value
-        filename = os.path.join(padnaam)
-        if hash in lines:
-
-            checksum = hashlib.sha1(filename.encode('utf-8')).hexdigest()  # Er wordt een SHA1-hash berekend van het bestand in het opgegeven pad
-            with open('malware_hashes.txt', 'a') as f:  # Er wordt een TXT-bestand geopend
-                f.write('{}\n'.format(checksum)) # De SHA1-hashes van geïnfecteerde bestanden wordt hier naartoe geschreven
-            print(checksum)
 
 # Omschrijving staat in de summary
 def hashing_demo():
@@ -87,8 +70,29 @@ def hashing_demo():
         except (IOError, PermissionError, MemoryError, FileNotFoundError) as x:  # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
             print(x)
 
+    return path_dict
+
+# Omschrijving van de functie staat in de summary
+def convert_md5_to_sha1():
+    with open('path_and_hash.csv', 'r') as e: # Het bestand met de padnamen en MD5 hashes wordt geopend
+        path_dict = dict(filter(None, csv.reader(e))) # Het CSV-bestand wordt omgezet in een dictionary
+
+    lines = [line.rstrip('\n') for line in open('virusshare_matches.txt')]  # Het bestand met daarin de MD5 matches van Virusshare wordt hier geopend
+
+    for key, value in path_dict.items(): # De loop gaat over alle items in de dictionary
+        padnaam = key
+        hash = value
+        filename = os.path.join(padnaam)
+        if hash in lines: # Als de hash voorkomt in de dictionary, doe het volgende:
+            checksum = hashlib.sha1(filename.encode('utf-8')).hexdigest()  # Er wordt een SHA1-hash berekend van het bestand in het opgegeven pad
+            with open('malware_hashes.txt', 'a') as f:  # Er wordt een TXT-bestand geopend
+                f.write('{}\n'.format(checksum)) # De SHA1-hashes van geïnfecteerde bestanden wordt hier naartoe geschreven
+            print(padnaam)
+            print(checksum)
+
 def main():
-    hashing_demo()
+    hashing_demo() # Of get_pathname_and_hashes
+    # convert_md5_to_sha1
 
 if __name__ == '__main__':
     main()
