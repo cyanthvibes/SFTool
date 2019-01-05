@@ -80,19 +80,23 @@ def convert_md5_to_sha1():
     lines = [line.rstrip('\n') for line in open('virusshare_matches.txt')]  # Het bestand met daarin de MD5 matches van Virusshare wordt hier geopend
 
     for key, value in path_dict.items(): # De loop gaat over alle items in de dictionary
-        padnaam = key
-        hash = value
-        filename = os.path.join(padnaam)
+        hash = key
+        padnaam = value
+        filename = os.path.join(hash)
         if hash in lines: # Als de hash voorkomt in de dictionary, doe het volgende:
             checksum = hashlib.sha1(filename.encode('utf-8')).hexdigest()  # Er wordt een SHA1-hash berekend van het bestand in het opgegeven pad
             with open('malware_hashes.txt', 'a') as f:  # Er wordt een TXT-bestand geopend
                 f.write('{}\n'.format(checksum)) # De SHA1-hashes van geïnfecteerde bestanden wordt hier naartoe geschreven
-            print(padnaam)
             print(checksum)
 
+            with open('malware_sha_path.csv', 'a') as f:  # Er wordt een CSV-bestand geopend
+                writer = csv.writer(f)
+                writer.writerow([checksum, padnaam])    # De sha1 waarde en de padnaam van de malware worden weggeschreven
+
+
 def main():
-    hashing_demo() # Of get_pathname_and_hashes
-    # convert_md5_to_sha1
+    # hashing_demo() # Of get_pathname_and_hashes
+    convert_md5_to_sha1()
 
 if __name__ == '__main__':
     main()
