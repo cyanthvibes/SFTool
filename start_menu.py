@@ -17,6 +17,7 @@ from SFTool.case import Case
 from SFTool.database_helper import insert_data_case_information
 from SFTool.database_helper import select_database
 from SFTool.sys_specs import register_system_specs_to_database
+from SFTool.hashing import hashing_demo
 from SFTool.hashing import get_pathname_and_hashes
 from SFTool.compare_hashes import compare_hashes
 from SFTool.hashing import convert_md5_to_sha1
@@ -56,7 +57,8 @@ def scan_malware():
         register_system_specs_to_database()  # write system specifications to database
 
         print('calculating hashes... ' + "\n")
-        get_pathname_and_hashes()  # calculate the md5 hashes of files on the system
+        hashing_demo()  # demo
+        # get_pathname_and_hashes()  # calculate the md5 hashes of files on the system
 
         # check if the system has an connection to the internet
         if internet_on():
