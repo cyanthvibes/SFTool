@@ -4,8 +4,23 @@ Summary: Write system/volume specifications (serial number, disk name and file f
 """
 
 import wmi  # pip install wmi
-from SFTool.system import System
 from SFTool.database_helper import insert_data_system_specifications
+
+
+class System:
+    def __init__(self, serial_number, disk_name, file_fomat):
+        self.serial_number = serial_number
+        self.disk_name = disk_name
+        self.file_fomat = file_fomat
+
+    def get_serial_number(self):
+        return self.serial_number
+
+    def get_disk_name(self):
+        return self.disk_name
+
+    def get_file_fomat(self):
+        return self.file_fomat
 
 
 def register_system_specs_to_database():
