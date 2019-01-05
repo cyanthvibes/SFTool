@@ -13,7 +13,7 @@ Summary: - get_pathname_and_hashes function
                 Making a SHA1-hash of the files and storing them in 'malware_hashes.txt'
          - hashing_demo function
                 Creating the hashes of a given directory
-                This script will be used in the demo because the lack of time
+                This script will be used in the demo instead of 'get_pathname_and_hashes' because the lack of time
 
 """
 
