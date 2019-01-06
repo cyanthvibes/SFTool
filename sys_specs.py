@@ -1,6 +1,6 @@
 """
 Author: Mariska Temming, S1106242
-Summary: Write system/volume specifications (serial number, disk name and file format) to the database
+Summary: Writes system/volume specifications (serial number, disk name and file format) to the database
 """
 
 import wmi  # pip install wmi
