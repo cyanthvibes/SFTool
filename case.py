@@ -1,6 +1,6 @@
 """
 Author: Mariska Temming, S1106242
-Summary: A class with the case information
+Summary: The class Case contains case information: case name, start number, investigator's name, comment and time
 """
 
 
