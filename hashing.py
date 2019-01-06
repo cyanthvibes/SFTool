@@ -42,7 +42,7 @@ def get_pathname_and_hashes(): #
                                 writer.writerow([key, value])
 
                         with open('system_hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
-                            for key in path_dict.values(): # Elke value (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                            for value in path_dict.values(): # Elke value (de hashes) in hash_dict worden naar dit bestand toegeschreven
                                 e.write('{}\n'.format(key))
             except (IOError, PermissionError, MemoryError, FileNotFoundError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
                 print(x)
@@ -66,7 +66,7 @@ def hashing_demo():
                         writer.writerow([key, value])
 
                 with open('system_hashes.txt', 'a') as e:  # Er wordt een TXT-bestand geopend voor value in path_dict.values():
-                    e.write('{}\n'.format(key)) #  Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                    e.write('{}\n'.format(value)) #  Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
         except (IOError, PermissionError, MemoryError, FileNotFoundError) as x:  # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
             print(x)
 
