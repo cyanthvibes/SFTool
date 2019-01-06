@@ -1,13 +1,12 @@
 """
 Author: Mariska Temming, S1106242
-Summary: - The startmenu is the main of the SFTool.
-         - First it makes a memory dump of the system.
-         - Then it shows the GUI of the SFTool.
-         - The user could choose three options in the GUI: "View database", "Quit" and "Start malware scan".
-         - When the user clicks on "Start malware scan", SFTool is scanning the system of availability of malware.
-         - When the user clicks on "View database", the database (SFT.db) is shown in the console.
-         - When the user clicks on "Quit", the GUI closes.
-         and start the SFTool.
+Summary: - The startmenu is the main of the SFTool
+         - First it makes a memory dump of the system
+         - Then it shows the GUI of the SFTool
+         - The user could choose three options in the GUI: "View database", "Quit" and "Start malware scan"
+         - When the user clicks on "Start malware scan", SFTool is scanning the system of availability of malware
+         - When the user clicks on "View database", the database (SFT.db) is shown in the console
+         - When the user clicks on "Quit", the GUI closes
 """
 
 import PySimpleGUI as sg  # pip install PySimpleGUI
@@ -18,11 +17,12 @@ from SFTool.database_helper import insert_data_case_information
 from SFTool.database_helper import select_database
 from SFTool.sys_specs import register_system_specs_to_database
 from SFTool.hashing import hashing_demo
-from SFTool.hashing import get_pathname_and_hashes
 from SFTool.compare_hashes import compare_hashes
 from SFTool.hashing import convert_md5_to_sha1
 from SFTool.network_checker import internet_on
 from SFTool.virustotal import register_malware_to_database
+from SFTool.malware_copy import malware_copy
+
 
 
 # from threading import Thread
@@ -41,7 +41,8 @@ from SFTool.virustotal import register_malware_to_database
 #     thread.join()
 #     print("thread finished...exiting")
 
-# The function view database shows the database in the console
+
+# Shows the data of the database in the console
 def view_database():
     select_database()
     return None
@@ -54,34 +55,34 @@ def scan_malware():
         print("Malware scan is started" + "\n")
 
         print('Registrating system specifications... ' + "\n")
-        register_system_specs_to_database()  # write system specifications to database
+        register_system_specs_to_database()  # Write system specifications to database
 
         print('calculating hashes... ' + "\n")
-        hashing_demo()  # demo
-        # get_pathname_and_hashes()  # calculate the md5 hashes of files on the system
+        hashing_demo()  # Calculate the md5 hashes of the files on the system (this function is only used for the demo)
+        # get_pathname_and_hashes()  # Calculate the md5 hashes of the files on the system
 
-        # check if the system has an connection to the internet
+        # Check if the system has an connection to the internet
         if internet_on():
             print('The system has an connection to the internet!' + "\n")
             print('Detecting malware in VirusShare... ' + "\n")
-            compare_hashes()  # offline database: virusshare (compare system hashes with the hahses of VirusShare)
+            compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
 
             print('Converting MD5 to SHA1' + "\n")
-            convert_md5_to_sha1()  # converts the malware md5 hashes to sha1
+            convert_md5_to_sha1()  # Converts the malware md5 hashes to sha1
 
             print('Checking malware name in VirusTotal... ' + "\n")
-            register_malware_to_database()  # online database: VirusTotal (writes the malware information to the
+            register_malware_to_database()  # Online database: VirusTotal (writes the malware information to the
             # database)
         elif not internet_on():
             print('The system has not an connection to the internet!' + "\n")
             print('Detecting malware in VirusShare... ' + "\n")
-            compare_hashes()  # offline database: virusshare (compare system hashes with the hahses of VirusShare)
+            compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
 
             print('Converting MD5 to SHA1' + "\n")
-            convert_md5_to_sha1()  # converts the malware md5 hashes to sha1
+            convert_md5_to_sha1()  # Converts the malware md5 hashes to sha1
 
         print('Copying malware to USB drive..')
-        # copy_malware()  miscchien in de virustotal class
+        malware_copy()    # Copies the malware to dictionary "malware_copies" on the USB-drive
 
         print('The malware scan is finished!')
 
@@ -92,6 +93,7 @@ def scan_malware():
     return result
 
 
+# Shows the GUI of the SFTool
 def show_window():
     status_mode = sg.Text('Welcome!', size=(30, 1), font=('Arial', 14), text_color='red')
     empty_row = sg.Text('', size=(1, 1))  # creates a empy row for the format of the GUI
@@ -117,7 +119,7 @@ def show_window():
         [empty_row]
     ]
 
-    window = sg.Window('SFT - Start menu').Layout(layout)  # Show the Window to the user
+    window = sg.Window('SFT - Start menu').Layout(layout)  # Shows the window to the user
 
     while True:
         event, value = window.Read()  # Read the Window
@@ -126,13 +128,14 @@ def show_window():
             view_database()
 
         elif event == 'Start malware scan':
-            # start_malware.Update(button_color=('white', 'black'))
             case_name = value['_CASE_NAME_']
             start_number = value['_START_NUMBER']
             investigator_name = value['_INVESTIGATOR_']
             comment = value['_COMMENT_']
             time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-
+            
+            # If case information is filled then start the malware scan
+            # Else do not start the malware scan and fill in the blanks
             if case_name == '' or start_number == '' or investigator_name == '':
                 sg.Popup("Fill in the case data on the start menu. " + "\n" +
                          "Required: case name, start number and investigator's name" + "\n")
@@ -146,11 +149,11 @@ def show_window():
                       "\t" + "\t" + comment + "\n")
 
                 case_data = Case(case_name, start_number, investigator_name, comment, time)
-                insert_data_case_information(case_data)  # write case information to database
+                insert_data_case_information(case_data)  # Write case information to database
 
                 result = scan_malware()
-                print(result)
-                status_mode.Update(result)
+                print(result)   # Print the status on the console
+                status_mode.Update(result)  # Update the status in the GUI
 
         elif event == 'Quit' or event is None:
             window.Close()
@@ -162,8 +165,8 @@ def show_window():
 def sftool():
     try:
         print("Creates a memory dump of the system...")
-        # memory dump maken hier()
-        # live triage hier()
+        # memory_dump()
+        # live_triage()
         show_window()
     except Exception as e:
         print(e)
@@ -175,4 +178,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
