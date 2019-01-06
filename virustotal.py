@@ -1,4 +1,10 @@
-# Mariska Temming, S1106242
+"""
+Author: Mariska Temming, S1106242
+Summary: - The class Virustotal contains virustotal information: hash (the malware hash),
+            key (the public key of virustotal), input (a input file with the malware hashes)
+         - Checks the key, hash and file if they are valid
+         -
+"""
 
 import json
 import requests     # pip install requests
@@ -6,17 +12,16 @@ import os
 import time
 import datetime
 import csv
+
 from SFTool.malware import Malware
 from SFTool.database_helper import insert_data_malware_detection
 
-from SFTool.get_path_malware import get_malware_path
-
 
 class Virustotal:
-    def __init__(self, hash, key, output):
+    def __init__(self, hash, key, input):
         self.hash = hash
         self.key = key
-        self.output = output
+        self.input = input
 
     def get_hash(self):
         return self.hash
@@ -24,11 +29,11 @@ class Virustotal:
     def get_key(self):
         return self.key
 
-    def get_output(self):
-        return self.output
+    def get_input(self):
+        return self.input
 
 
-# checks if key is valid
+# Checks if key is valid
 def is_valid_key(key):
     if len(key) == 64:
         return True
@@ -37,7 +42,7 @@ def is_valid_key(key):
         return False
 
 
-# checks if hashes appear valid
+# Checks if hashes appear valid
 def is_valid_hash(hash):
     if len(hash) == 32:     # MD5
         return True
@@ -50,6 +55,7 @@ def is_valid_hash(hash):
         return False
 
 
+# Checks if file exists
 def file_exists(filepath):
     try:
         if os.path.isfile(filepath):
@@ -61,31 +67,34 @@ def file_exists(filepath):
         print(e)
 
 
+# gets the malware name
 def get_malware_name(key, hash):
     json_response = []
 
     params = {'apikey': key, 'resource': hash}
-    url = requests.get('https://www.virustotal.com/vtapi/v2/file/report', params=params)
+    url = requests.get('https://www.virustotal.com/vtapi/v2/file/report', params=params)   # Send request to VirusTotal
     try:
         json_response = url.json()
     except json.decoder.JSONDecodeError as e:
         print(e)
-    print("json: " + str(json_response))
+    print("json: " + str(json_response))   # Print the result of the request to VirusTotal in json format in the console
 
     if json_response != []:
-        response = int(json_response.get('response_code'))
+        response = int(json_response.get('response_code'))  # Gets the response code
 
         if response == 0:
             print(hash + ' is not in Virus Total')
             result = None
         elif response == 1:
-            positives = int(json_response.get('positives'))
+            positives = int(json_response.get('positives'))    # Gets the positives: amount of virusscanners who
+            # detects the malware (hash)
             if positives == 0:
                 print(hash + ' is not malicious')
                 result = None
             else:
                 print(hash + ' is malicious')
-                result = json_response["scans"]["F-Secure"]["result"]
+                result = json_response["scans"]["F-Secure"]["result"]   # Get the malware name from the virusscanner:
+                # F-Secure
         else:
             print(hash + ' could not be searched. Please try again later.')
             result = None
@@ -95,25 +104,28 @@ def get_malware_name(key, hash):
     return result
 
 
+# Write malware detection data to the database
 def register_malware_to_database():
     input_file = 'malware_hashes.txt'
     file_exists(input_file)
     key = '672e7867c8c51efca05872894e865a92630883316d06d9d73b9284bc92977dd5'
 
     if is_valid_key(key):
-        with open(input_file) as malware_hashes:  # open text file with malware hashes and close automatically
+        with open(input_file) as malware_hashes:  # Opens a text file with the malware hashes and closes automatically
             for line in malware_hashes.readlines():
                 hash = line.rstrip()
                 if is_valid_hash(hash):
                     time_detection = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
                     malware_name = str(get_malware_name(key, line.rstrip()))
                     path = ''
-                    with open('malware_sha_path.csv', 'r') as e:  # opens file with path and sha1 hashes
-                        path_dict = dict(filter(None, csv.reader(e)))  # convert CSV-file to dictionary
-                        path = path_dict.get(hash)  # if the hash exists then get the path of that hash
+                    with open('malware_sha_path.csv', 'r') as e:  # Opens file with path and sha1 hashes of the malware
+                        malware_dict = dict(filter(None, csv.reader(e)))  # Convert CSV-file to a dictionary
+                        path = malware_dict.get(hash)  # If the hash exists then get the path of that hash
+
                     malware = Malware(malware_name, hash, path, time_detection)
-                    insert_data_malware_detection(malware)
-                time.sleep(15)  # 4 requests to VirusTotal per minut, so there is a sleep needed
+                    insert_data_malware_detection(malware)  # Write the malware detection data to the database
+
+                time.sleep(15)  # There is a sleep needed because of the 4 requests per minut to VirusTotal
 
 
 def main():
@@ -122,4 +134,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
