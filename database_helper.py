@@ -13,7 +13,7 @@ import sqlite3
 # Creates a database connection to the SQLite database specified by db_file
 def get_connection(db_file):
     try:
-        conn = sqlite3.connect(db_file)  # param db_file: database file
+        conn = sqlite3.connect(db_file)
         print("Opened database successfully!")
         return conn
     except ConnectionError as e:
