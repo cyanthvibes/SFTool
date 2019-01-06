@@ -66,7 +66,7 @@ def hashing_demo():
                         writer.writerow([key, value])
 
                 with open('system_hashes.txt', 'a') as e:  # Er wordt een TXT-bestand geopend voor value in path_dict.values():
-                    e.write('{}\n'.format(value)) #  Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                    e.write('{}\n'.format(key)) #  Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
         except (IOError, PermissionError, MemoryError, FileNotFoundError) as x:  # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
             print(x)
 
@@ -84,7 +84,7 @@ def convert_md5_to_sha1():
         padnaam = value
         filename = os.path.join(padnaam)
         if hash in lines: # Als de hash voorkomt in de dictionary, doe het volgende:
-            checksum = hashlib.sha1(filename.encode('utf-8')).hexdigest()  # Er wordt een SHA1-hash berekend van het bestand in het opgegeven pad
+            checksum = hashlib.sha1(filename.encode('utf-8').hexdigest())  # Er wordt een SHA1-hash berekend van het bestand in het opgegeven pad
             with open('malware_hashes.txt', 'a') as f:  # Er wordt een TXT-bestand geopend
                 f.write('{}\n'.format(checksum)) # De SHA1-hashes van geïnfecteerde bestanden wordt hier naartoe geschreven
             print(checksum)
@@ -95,7 +95,7 @@ def convert_md5_to_sha1():
 
 
 def main():
-    # hashing_demo() # Of get_pathname_and_hashes
+    get_pathname_and_hashes()
     convert_md5_to_sha1()
 
 if __name__ == '__main__':
