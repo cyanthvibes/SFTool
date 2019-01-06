@@ -42,7 +42,7 @@ def get_pathname_and_hashes(): #
                                 writer.writerow([key, value])
 
                         with open('system_hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
-                            for value in path_dict.values(): # Elke value (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                            for key in path_dict.items(): # Elke value (de hashes) in hash_dict worden naar dit bestand toegeschreven
                                 e.write('{}\n'.format(key))
             except (IOError, PermissionError, MemoryError, FileNotFoundError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
                 print(x)
@@ -93,9 +93,9 @@ def convert_md5_to_sha1():
                 writer = csv.writer(f)
                 writer.writerow([checksum, padnaam])    # De sha1 waarde en de padnaam van de malware worden weggeschreven
 
-
 def main():
     get_pathname_and_hashes()
+    # hashing_demo()
     convert_md5_to_sha1()
 
 if __name__ == '__main__':
