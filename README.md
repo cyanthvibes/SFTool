@@ -1,6 +1,7 @@
 
 - De scripts moeten in één direcoty komen te staan met de naam: SFTool.
 - Daarnaast moet er nog een leeg bestandje worden aangemaakt: __init__.py
+- De map moet ook het bestand 'virusshare_hashes.txt' bevatten
 
 Handleiding:
 1. Voer eerst het script database_helper.py uit om de database te maken.
