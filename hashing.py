@@ -31,19 +31,18 @@ def get_pathname_and_hashes(): #
             try:
                 for name in files: # Voor elk bestand wordt de loop uitgevoerd
                     filename = (os.path.join(root, name))
-                    if os.path.getsize(filename) <= 10: # Voer de loop uit als de bestanden kleiner of gelijk zijn aan 10MB (voor demo)
-                        blocksize = 65536
-                        path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
-                        print(path_dict) # Zodat er kan worden gezien of het werkt
+                    blocksize = 65536
+                    path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                    print(path_dict) # Zodat er kan worden gezien of het werkt
 
-                        with open('path_and_hash.csv', 'a') as f: # Er wordt een CSV-bestand geopend
-                            writer = csv.writer(f)
-                            for key, value in path_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
-                                writer.writerow([key, value])
+                    with open('path_and_hash.csv', 'a') as f: # Er wordt een CSV-bestand geopend
+                        writer = csv.writer(f)
+                        for key, value in path_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
+                            writer.writerow([key, value])
 
-                        with open('system_hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
-                            for key in path_dict.keys(): # Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
-                                e.write('{}\n'.format(key))
+                    with open('system_hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
+                        for key in path_dict.keys(): # Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                            e.write('{}\n'.format(key))
             except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
                 print(x)
 
@@ -56,18 +55,20 @@ def hashing_demo():
         try:
             for name in files:  # Voor elk bestand wordt de loop uitgevoerd
                 filename = (os.path.join(root, name))
-                blocksize = 65536
-                path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(),filename)])  # De padnaam en de MD5 hash worden opgeslagen in een dictionary
-                print(path_dict)  # Zodat er kan worden gezien of het werkt
+                if os.path.getsize(filename) <= 100:  # Voer de loop uit als de bestanden kleiner of gelijk zijn aan 10MB (voor demo)
+                    blocksize = 65536
+                    path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)])  # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                    print(path_dict)  # Zodat er kan worden gezien of het werkt
 
-                with open('path_and_hash.csv', 'a') as f:  # Er wordt een CSV-bestand geopend
-                    writer = csv.writer(f)
-                    for key, value in path_dict.items():  # De items (keys en values) worden naar dit bestand toe geschreven
-                        writer.writerow([key, value])
+                    with open('path_and_hash.csv', 'a') as f: # Er wordt een CSV-bestand geopend
+                        writer = csv.writer(f)
+                        for key, value in path_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
+                            writer.writerow([key, value])
 
-                with open('system_hashes.txt', 'a') as e:  # Er wordt een TXT-bestand geopend voor value in path_dict.values():
-                    e.write('{}\n'.format(key)) #  Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
-        except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x:  # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
+                    with open('system_hashes.txt', 'a') as e: # Er wordt een TXT-bestand geopend
+                        for key in path_dict.keys():  # Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                            e.write('{}\n'.format(key))
+        except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
             print(x)
 
     return path_dict
@@ -92,6 +93,8 @@ def convert_md5_to_sha1():
             with open('malware_sha_path.csv', 'a') as f:  # Er wordt een CSV-bestand geopend
                 writer = csv.writer(f)
                 writer.writerow([checksum, padnaam])    # De sha1 waarde en de padnaam van de malware worden weggeschreven
+                
+    return checksum
 
 def main():
     get_pathname_and_hashes()
