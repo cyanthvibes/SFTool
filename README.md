@@ -1,4 +1,3 @@
-Hey, this is a README file ;)
 
 - De scripts moeten in één direcoty komen te staan met de naam: SFTool.
 - Daarnaast moet er nog een leeg bestandje worden aangemaakt: __init__.py
