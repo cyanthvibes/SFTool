@@ -15,6 +15,7 @@ def compare_hashes():
             if line in f1:
                 with open('virusshare_matches.txt', 'a') as e: # Open het 'virusshare_matches.txt'
                     e.write('{}\n'.format(line)) # Schrijf de overeenkomende hash naar het bestand
+    return line
 
 def main():
     compare_hashes()
