@@ -12,16 +12,16 @@ Summary: - The startmenu is the main of the SFTool
 import PySimpleGUI as sg  # pip install PySimpleGUI
 import datetime
 
-from SFTool.case import Case
-from SFTool.database_helper import insert_data_case_information
-from SFTool.database_helper import select_database
-from SFTool.sys_specs import register_system_specs_to_database
-from SFTool.hashing import hashing_demo
-from SFTool.compare_hashes import compare_hashes
-from SFTool.hashing import convert_md5_to_sha1
-from SFTool.network_checker import internet_on
-from SFTool.virustotal import register_malware_to_database
-from SFTool.malware_copy import malware_copy
+from case import Case
+from database_helper import insert_data_case_information
+from database_helper import select_database
+from sys_specs import register_system_specs_to_database
+from hashing import hashing_demo
+from hashing import get_pathname_and_hashes
+from compare_hashes import compare_hashes
+from hashing import convert_md5_to_sha1
+from network_checker import internet_on
+from virustotal import register_malware_to_database
 
 
 
@@ -52,19 +52,19 @@ def view_database():
 def scan_malware():
     result = 'OK'
     try:
-        print("Malware scan is started" + "\n")
+        print("The malware scan has been started" + "\n")
 
-        print('Registrating system specifications... ' + "\n")
+        print('Registrating the system specifications... ' + "\n")
         register_system_specs_to_database()  # Write system specifications to database
 
-        print('calculating hashes... ' + "\n")
-        hashing_demo()  # Calculate the md5 hashes of the files on the system (this function is only used for the demo)
-        # get_pathname_and_hashes()  # Calculate the md5 hashes of the files on the system
+        print('Calculating hashes... ' + "\n")
+        # hashing_demo()  # Calculate the md5 hashes of the files on the system (this function is only used for the demo)
+        get_pathname_and_hashes()  # Calculate the md5 hashes of the files on the system
 
         # Check if the system has an connection to the internet
         if internet_on():
-            print('The system has an connection to the internet!' + "\n")
-            print('Detecting malware in VirusShare... ' + "\n")
+            print('The system is connected to the internet!' + "\n")
+            print('Comparing system hashes with VirusShare... ' + "\n")
             compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
 
             print('Converting MD5 to SHA1' + "\n")
@@ -74,15 +74,15 @@ def scan_malware():
             register_malware_to_database()  # Online database: VirusTotal (writes the malware information to the
             # database)
         elif not internet_on():
-            print('The system has not an connection to the internet!' + "\n")
-            print('Detecting malware in VirusShare... ' + "\n")
+            print('The system is not connected to the internet!' + "\n")
+            print('Comparing system hashes with VirusShare... ' + "\n")
             compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
 
             print('Converting MD5 to SHA1' + "\n")
             convert_md5_to_sha1()  # Converts the malware md5 hashes to sha1
 
         print('Copying malware to USB drive..')
-        malware_copy()    # Copies the malware to dictionary "malware_copies" on the USB-drive
+            # Copies the malware to dictionary "malware_copies" on the USB-drive
 
         print('The malware scan is finished!')
 
@@ -133,7 +133,7 @@ def show_window():
             investigator_name = value['_INVESTIGATOR_']
             comment = value['_COMMENT_']
             time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-            
+
             # If case information is filled then start the malware scan
             # Else do not start the malware scan and fill in the blanks
             if case_name == '' or start_number == '' or investigator_name == '':
@@ -178,5 +178,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
