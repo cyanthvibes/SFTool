@@ -11,11 +11,11 @@ Summary: - compare_hashes
 # Omschrijving van de functie staat in de summary
 def compare_hashes():
     with open('virusshare_hashes.txt', 'r') as f1, open('system_hashes.txt', 'r') as f2: # Opent 'virusshare_hashes.txt' en 'system_hashes.txt"
-        for l1, l2 in zip(f1, f2):
-            if l2 == l1: # Als de regels overeenkomen, doe dan het volgende:
+        for line in f2:
+            if line in f1:
                 with open('virusshare_matches.txt', 'a') as e: # Open het 'virusshare_matches.txt'
-                    e.write('{}\n'.format(l2)) # Schrijf de overeenkomende hash naar het bestand
-    return l2
+                    e.write('{}\n'.format(line)) # Schrijf de overeenkomende hash naar het bestand
+    return line
 
 def main():
     compare_hashes()
