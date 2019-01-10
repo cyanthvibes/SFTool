@@ -11,35 +11,18 @@ Summary: - The startmenu is the main of the SFTool
 
 import PySimpleGUI as sg  # pip install PySimpleGUI
 import datetime
+from time import sleep
 
-from case import Case
-from database_helper import insert_data_case_information
-from database_helper import select_database
-from sys_specs import register_system_specs_to_database
-from hashing import hashing_demo
-from hashing import get_pathname_and_hashes
-from compare_hashes import compare_hashes
-from hashing import convert_md5_to_sha1
-from network_checker import internet_on
-from virustotal import register_malware_to_database
-
-
-
-# from threading import Thread
-# from time import sleep
-#
-#
-# def threaded_function(arg):
-#     for i in range(arg):
-#         print("running")
-#         sleep(1)
-#
-#
-# def thread_main():
-#     thread = Thread(target = threaded_function, args = (10, ))
-#     thread.start()
-#     thread.join()
-#     print("thread finished...exiting")
+from SFTool.case import Case
+from SFTool.database_helper import insert_data_case_information
+from SFTool.database_helper import select_database
+from SFTool.sys_specs import register_system_specs_to_database
+from SFTool.hashing import get_pathname_and_hashes
+from SFTool.compare_hashes import compare_hashes
+from SFTool.hashing import convert_md5_to_sha1
+from SFTool.network_checker import internet_on
+from SFTool.virustotal import register_malware_to_database
+from SFTool.malware_copy import malware_copy
 
 
 # Shows the data of the database in the console
@@ -49,42 +32,79 @@ def view_database():
 
 
 # The function scan malware is the main program of the SFTool: SFTool is scanning the system of availability of malware
-def scan_malware():
+def scan_malware(window):
     result = 'OK'
     try:
         print("The malware scan has been started" + "\n")
+        window.FindElement('_STATUS_').Update("The malware scan has been started")
+        window.Refresh()
+        sleep(1)
 
         print('Registrating the system specifications... ' + "\n")
+        window.FindElement('_STATUS_').Update("Registrating the system specifications... ")
+        window.Refresh()
+        sleep(1)
         register_system_specs_to_database()  # Write system specifications to database
 
         print('Calculating hashes... ' + "\n")
-        # hashing_demo()  # Calculate the md5 hashes of the files on the system (this function is only used for the demo)
+        window.FindElement('_STATUS_').Update("Calculating hashes...")
+        window.Refresh()
+        sleep(1)
+        #hashing_demo()  # Calculate the md5 hashes of the files on the system (this function is only used for the demo)
         get_pathname_and_hashes()  # Calculate the md5 hashes of the files on the system
 
         # Check if the system has an connection to the internet
         if internet_on():
             print('The system is connected to the internet!' + "\n")
+            window.FindElement('_STATUS_').Update("The system is connected to the internet!")
+            window.Refresh()
+            sleep(1)
             print('Comparing system hashes with VirusShare... ' + "\n")
+            window.FindElement('_STATUS_').Update("Comparing system hashes with VirusShare... ")
+            window.Refresh()
+            sleep(1)
             compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
 
-            print('Converting MD5 to SHA1' + "\n")
+            print('Converting MD5 to SHA1...' + "\n")
+            window.FindElement('_STATUS_').Update("Converting MD5 to SHA1...")
+            window.Refresh()
+            sleep(1)
             convert_md5_to_sha1()  # Converts the malware md5 hashes to sha1
 
-            print('Checking malware name in VirusTotal... ' + "\n")
+            print("\n" + 'Checking malware name in VirusTotal... ' + "\n")
+            window.FindElement('_STATUS_').Update("Checking malware name in VirusTotal...  ")
+            window.Refresh()
+            sleep(1)
             register_malware_to_database()  # Online database: VirusTotal (writes the malware information to the
             # database)
         elif not internet_on():
             print('The system is not connected to the internet!' + "\n")
+            window.FindElement('_STATUS_').Update("The system is connected to the internet!")
+            window.Refresh()
+            sleep(1)
+
             print('Comparing system hashes with VirusShare... ' + "\n")
+            window.FindElement('_STATUS_').Update("Comparing system hashes with VirusShare... ")
+            window.Refresh()
+            sleep(1)
             compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
 
-            print('Converting MD5 to SHA1' + "\n")
+            print('Converting MD5 to SHA1...' + "\n")
+            window.FindElement('_STATUS_').Update("Converting MD5 to SHA1...")
+            window.Refresh()
+            sleep(1)
             convert_md5_to_sha1()  # Converts the malware md5 hashes to sha1
 
-        print('Copying malware to USB drive..')
-            # Copies the malware to dictionary "malware_copies" on the USB-drive
+        print('Copying malware to USB drive...')
+        malware_copy()    # Copies the malware to dictionary "malware_copies" on the USB-drive
+        window.FindElement('_STATUS_').Update("Copying malware to USB drive...")
+        window.Refresh()
+        sleep(1)
 
         print('The malware scan is finished!')
+        window.FindElement('_STATUS_').Update("The malware scan is finished!")
+        window.Refresh()
+        sleep(1)
 
     except Exception as e:
         print(e)
@@ -95,7 +115,7 @@ def scan_malware():
 
 # Shows the GUI of the SFTool
 def show_window():
-    status_mode = sg.Text('Welcome!', size=(30, 1), font=('Arial', 14), text_color='red')
+    status_mode = sg.Text('Welcome!', size=(45, 1), font=('Arial', 14), text_color='red', key='_STATUS_')
     empty_row = sg.Text('', size=(1, 1))  # creates a empy row for the format of the GUI
     # create buttons
     start_malware = sg.Button('Start malware scan', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'),
@@ -122,12 +142,19 @@ def show_window():
     window = sg.Window('SFT - Start menu').Layout(layout)  # Shows the window to the user
 
     while True:
-        event, value = window.Read()  # Read the Window
+        # event, value = window.Read()  # Read the Window
+        event, value = window.Read()
         # Take appropriate action based on button
         if event == 'View Database':
+            # window.FindElement('_STATUS_').Update('hoooooi')
+            # window.Refresh()
+            # sleep(2)
+            # window.FindElement('_STATUS_').Update('doeeeei')
+            # window.Refresh()
             view_database()
 
         elif event == 'Start malware scan':
+
             case_name = value['_CASE_NAME_']
             start_number = value['_START_NUMBER']
             investigator_name = value['_INVESTIGATOR_']
@@ -151,7 +178,7 @@ def show_window():
                 case_data = Case(case_name, start_number, investigator_name, comment, time)
                 insert_data_case_information(case_data)  # Write case information to database
 
-                result = scan_malware()
+                result = scan_malware(window)
                 print(result)   # Print the status on the console
                 status_mode.Update(result)  # Update the status in the GUI
 
