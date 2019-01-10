@@ -31,80 +31,65 @@ def view_database():
     return None
 
 
+# Update the status mode in the GUI
+def update_status_mode(window, status_mode):
+    window.FindElement('_STATUS_').Update(status_mode)
+    window.Refresh()
+    sleep(1)
+
+
 # The function scan malware is the main program of the SFTool: SFTool is scanning the system of availability of malware
 def scan_malware(window):
     result = 'OK'
     try:
         print("The malware scan has been started" + "\n")
-        window.FindElement('_STATUS_').Update("The malware scan has been started")
-        window.Refresh()
-        sleep(1)
+        update_status_mode(window, "The malware scan has been started")
 
         print('Registrating the system specifications... ' + "\n")
-        window.FindElement('_STATUS_').Update("Registrating the system specifications... ")
-        window.Refresh()
-        sleep(1)
+        update_status_mode(window, "Registrating the system specifications... ")
         register_system_specs_to_database()  # Write system specifications to database
 
         print('Calculating hashes... ' + "\n")
-        window.FindElement('_STATUS_').Update("Calculating hashes...")
-        window.Refresh()
-        sleep(1)
+        update_status_mode(window, "Calculating hashes...")
         #hashing_demo()  # Calculate the md5 hashes of the files on the system (this function is only used for the demo)
         get_pathname_and_hashes()  # Calculate the md5 hashes of the files on the system
 
         # Check if the system has an connection to the internet
         if internet_on():
             print('The system is connected to the internet!' + "\n")
-            window.FindElement('_STATUS_').Update("The system is connected to the internet!")
-            window.Refresh()
-            sleep(1)
+            update_status_mode(window, "The system is connected to the internet!")
+
             print('Comparing system hashes with VirusShare... ' + "\n")
-            window.FindElement('_STATUS_').Update("Comparing system hashes with VirusShare... ")
-            window.Refresh()
-            sleep(1)
+            update_status_mode(window, "Comparing system hashes with VirusShare... ")
             compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
 
             print('Converting MD5 to SHA1...' + "\n")
-            window.FindElement('_STATUS_').Update("Converting MD5 to SHA1...")
-            window.Refresh()
-            sleep(1)
+            update_status_mode(window, "Converting MD5 to SHA1...")
             convert_md5_to_sha1()  # Converts the malware md5 hashes to sha1
 
             print("\n" + 'Checking malware name in VirusTotal... ' + "\n")
-            window.FindElement('_STATUS_').Update("Checking malware name in VirusTotal...  ")
-            window.Refresh()
-            sleep(1)
+            update_status_mode(window, "Checking malware name in VirusTotal...  ")
             register_malware_to_database()  # Online database: VirusTotal (writes the malware information to the
             # database)
         elif not internet_on():
             print('The system is not connected to the internet!' + "\n")
-            window.FindElement('_STATUS_').Update("The system is connected to the internet!")
-            window.Refresh()
-            sleep(1)
+            update_status_mode(window, "The system is not connected to the internet!")
 
             print('Comparing system hashes with VirusShare... ' + "\n")
-            window.FindElement('_STATUS_').Update("Comparing system hashes with VirusShare... ")
-            window.Refresh()
-            sleep(1)
+            update_status_mode(window, "Comparing system hashes with VirusShare... ")
             compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
 
             print('Converting MD5 to SHA1...' + "\n")
-            window.FindElement('_STATUS_').Update("Converting MD5 to SHA1...")
-            window.Refresh()
-            sleep(1)
+            update_status_mode(window, "Converting MD5 to SHA1...")
             convert_md5_to_sha1()  # Converts the malware md5 hashes to sha1
 
         print('Copying malware to USB drive...')
+        update_status_mode(window, "Copying malware to USB drive...")
         malware_copy()    # Copies the malware to dictionary "malware_copies" on the USB-drive
-        window.FindElement('_STATUS_').Update("Copying malware to USB drive...")
-        window.Refresh()
-        sleep(1)
 
         print('The malware scan is finished!')
-        window.FindElement('_STATUS_').Update("The malware scan is finished!")
-        window.Refresh()
-        sleep(1)
+        update_status_mode(window, "The malware scan is finished!")
+
 
     except Exception as e:
         print(e)
