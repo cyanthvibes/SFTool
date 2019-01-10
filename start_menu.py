@@ -127,15 +127,9 @@ def show_window():
     window = sg.Window('SFT - Start menu').Layout(layout)  # Shows the window to the user
 
     while True:
-        # event, value = window.Read()  # Read the Window
-        event, value = window.Read()
+        event, value = window.Read() # Read the Window
         # Take appropriate action based on button
         if event == 'View Database':
-            # window.FindElement('_STATUS_').Update('hoooooi')
-            # window.Refresh()
-            # sleep(2)
-            # window.FindElement('_STATUS_').Update('doeeeei')
-            # window.Refresh()
             view_database()
 
         elif event == 'Start malware scan':
