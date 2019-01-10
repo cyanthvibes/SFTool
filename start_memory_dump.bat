@@ -1,1 +1,1 @@
-start memtriage --plugins=pslist --outfile=memory_dump.txt
+start memtriage --plugins=pslist --outfile=memory_dump.txt 
