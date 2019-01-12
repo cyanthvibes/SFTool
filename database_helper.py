@@ -88,7 +88,7 @@ def insert_data_virusshare_hashes():
             line = line.rstrip()
             print(line)
             c.execute("INSERT INTO virusshare_hashes(hash) VALUES(?)", (line,))
-            break
+                  
     conn.commit()  # Commit the queries
     conn.close()  # Close the connection with the database
 
