@@ -4,6 +4,7 @@ Summary: - The startmenu is the main of the SFTool
          - First it makes a memory dump of the system
          - Then it shows the GUI of the SFTool
          - The user could choose three options in the GUI: "View database", "Quit" and "Start malware scan"
+         - The user can also set an limit to the size of the files that are going to be hashes
          - When the user clicks on "Start malware scan", SFTool is scanning the system of availability of malware
          - When the user clicks on "View database", the database (SFT.db) is shown in the console
          - When the user clicks on "Quit", the GUI closes
@@ -13,23 +14,21 @@ import PySimpleGUI as sg  # pip install PySimpleGUI
 import datetime
 from time import sleep
 
-from SFTool.case import Case
-from SFTool.database_helper import insert_data_case_information
-from SFTool.database_helper import select_database
-from SFTool.sys_specs import register_system_specs_to_database
-from SFTool.hashing import get_pathname_and_hashes
-from SFTool.compare_hashes import compare_hashes
-from SFTool.hashing import convert_md5_to_sha1
-from SFTool.network_checker import internet_on
-from SFTool.virustotal import register_malware_to_database
-from SFTool.malware_copy import malware_copy
-
+from case import Case
+from database_helper import insert_data_case_information
+from database_helper import select_database
+from sys_specs import register_system_specs_to_database
+from hashing import get_pathname_and_hashes
+from compare_hashes import compare_hashes
+from hashing import convert_md5_to_sha1
+from network_checker import internet_on
+from virustotal import register_malware_to_database
+from malware_copy import malware_copy
 
 # Shows the data of the database in the console
 def view_database():
     select_database()
     return None
-
 
 # Update the status mode in the GUI
 def update_status_mode(window, status_mode):
@@ -37,9 +36,8 @@ def update_status_mode(window, status_mode):
     window.Refresh()
     sleep(1)
 
-
 # The function scan malware is the main program of the SFTool: SFTool is scanning the system of availability of malware
-def scan_malware(window):
+def scan_malware(window, file_size):
     result = 'OK'
     try:
         print("The malware scan has been started" + "\n")
@@ -51,8 +49,7 @@ def scan_malware(window):
 
         print('Calculating hashes... ' + "\n")
         update_status_mode(window, "Calculating hashes...")
-        #hashing_demo()  # Calculate the md5 hashes of the files on the system (this function is only used for the demo)
-        get_pathname_and_hashes()  # Calculate the md5 hashes of the files on the system
+        get_pathname_and_hashes(file_size)  # Calculate the md5 hashes of the files on the system
 
         # Check if the system has an connection to the internet
         if internet_on():
@@ -97,7 +94,6 @@ def scan_malware(window):
 
     return result
 
-
 # Shows the GUI of the SFTool
 def show_window():
     status_mode = sg.Text('Welcome!', size=(45, 1), font=('Arial', 14), text_color='red', key='_STATUS_')
@@ -111,13 +107,12 @@ def show_window():
     # Layout the design of the GUI
     layout = [
         [sg.Text('SFTool - Synergy Forensics Triage Tool', size=(31, 2), text_color='blue', font=('Arial', 30))],
-        [sg.Text('Case Name:', size=(13, 1), font=('Arial', 14)), sg.InputText(key='_CASE_NAME_', font=('Arial', 14))],
-        [sg.Text('Start Number:', size=(13, 1), font=('Arial', 14)),
-         sg.InputText(key='_START_NUMBER', font=('Arial', 14))],
-        [sg.Text('Investigator:', size=(13, 1), font=('Arial', 14)),
-         sg.InputText(key='_INVESTIGATOR_', font=('Arial', 14))],
-        [sg.Text('Comment:', size=(13, 1), font=('Arial', 14)), sg.InputText(key='_COMMENT_', font=('Arial', 14))],
-        [sg.Text('Status: ', size=(13, 1), font=('Arial', 14)), status_mode],
+        [sg.Text('Case Name:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_CASE_NAME_', font=('Arial', 14))],
+        [sg.Text('Start Number:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_START_NUMBER', font=('Arial', 14))],
+        [sg.Text('Investigator:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_INVESTIGATOR_', font=('Arial', 14))],
+        [sg.Text('Comment:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_COMMENT_', font=('Arial', 14))],
+        [sg.Text('File Size Limit (MB):', size=(15,1), font=('Arial', 14)), sg.InputText(key='_FILE_SIZE_', font=('Arial', 14))],
+        [sg.Text('Status: ', size=(15, 1), font=('Arial', 14)), status_mode],
         [empty_row],
         [empty_row],
         [view_databasee, empty_row, quit_startmenu, empty_row, start_malware],
@@ -138,6 +133,7 @@ def show_window():
             start_number = value['_START_NUMBER']
             investigator_name = value['_INVESTIGATOR_']
             comment = value['_COMMENT_']
+            file_size = int(value['_FILE_SIZE_'])
             time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
             # If case information is filled then start the malware scan
@@ -157,7 +153,7 @@ def show_window():
                 case_data = Case(case_name, start_number, investigator_name, comment, time)
                 insert_data_case_information(case_data)  # Write case information to database
 
-                result = scan_malware(window)
+                result = scan_malware(window, file_size)
                 print(result)   # Print the status on the console
                 status_mode.Update(result)  # Update the status in the GUI
 
@@ -166,7 +162,6 @@ def show_window():
             break
 
     return window
-
 
 def sftool():
     try:
@@ -177,10 +172,8 @@ def sftool():
     except Exception as e:
         print(e)
 
-
 def main():
     sftool()
-
 
 if __name__ == '__main__':
     main()
