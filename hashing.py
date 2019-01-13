@@ -17,7 +17,6 @@ Summary: - get_pathname_and_hashes function
 
 import hashlib, os, sys, csv
 import win32api # pip install pypiwin32
-import time
 
 drives = win32api.GetLogicalDriveStrings()  # Berekend het aantal schijven
 drives = drives = drives.split('\000')[:-1]
