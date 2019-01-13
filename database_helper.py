@@ -88,7 +88,6 @@ def insert_data_virusshare_hashes():
             line = line.rstrip()
             print(line)
             c.execute("INSERT INTO virusshare_hashes(hash) VALUES(?)", (line,))
-                  
     conn.commit()  # Commit the queries
     conn.close()  # Close the connection with the database
 
@@ -98,13 +97,17 @@ def select_virusshare_hashes_by_system_hash(system_hash):
     conn = get_connection("SFT.db")  # Get a connection with the database
     c = conn.cursor()  # Create a cursor object to call its execute() method to perform SQL commands
 
-    c.execute("SELECT * FROM virusshare_hashes WHERE hash=?", (system_hash,))
-    rows = c.fetchall()
-    for row in rows:
-        print(row)
+    c.execute("SELECT * FROM virusshare_hashes WHERE hash=?", (system_hash,))   # Compare system hash with hash from
+    # Virusshare
+
+    hash = c.fetchone()
+    new_hash = ''
+    if hash is not None:
+        new_hash = hash[0]   # We are expecting one result
 
     conn.commit()  # Commit the queries
     conn.close()  # Close the connection with the database
+    return new_hash
 
 
 # Selects the data of the database
@@ -148,11 +151,8 @@ def drop_database():
 
 def main():
     initialize_database()
-    insert_data_virusshare_hashes()
+    # insert_data_virusshare_hashes()
 
 
 if __name__ == '__main__':
     main()
-
-
-
