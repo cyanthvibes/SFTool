@@ -1,7 +1,1 @@
-
-- De scripts moeten in één directory komen te staan met de naam: SFTool.
-- Daarnaast moet er nog een leeg bestandje worden aangemaakt: __init__.py
-
-Handleiding:
-1. Voer eerst het script database_helper.py uit om de database te maken.
-2. Daarna kan je de tool aanroepen met behulp van het startmenu. 
+Hey, dit is een test-branche. Updates in start_menu.py
