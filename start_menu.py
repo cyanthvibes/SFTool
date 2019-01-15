@@ -51,6 +51,7 @@ def creating_memory_dump(window):
         [sg.Text('Memory Dump', size=(31, 2), text_color='blue', font=('Arial', 30))],
         [sg.Text('Total system memory size: ', size=(25, 1), font=('Arial', 14)), sg.Text(mem, size=(15, 1), font=('Arial', 14))],
         [empty_row],
+        [sg.Text('Please enter an output destination: '), sg.InputText(key='path'), sg.FolderBrowse()],
         [start, cancel]
     ]
 
@@ -63,8 +64,13 @@ def creating_memory_dump(window):
             break
 
         elif event == 'Start memory dump':
-            print("Creating memory dump...")
-            update_status_mode(window, "Creating memory dump...")
+            path = value['path']
+            if path == '':
+                sg.Popup('Please select an output destination')
+            else:
+                print("Creating memory dump...")
+                print(path)
+                update_status_mode(window, "Creating memory dump...")
 
     return window
 
@@ -142,7 +148,8 @@ def show_window():
 
     # Layout the design of the GUI
     layout = [
-        [sg.Text('SFTool - Synergy Forensics Triage Tool', size=(31, 2), text_color='blue', font=('Arial', 30))],
+        #[sg.Text('SFTool - Synergy Forensics Triage Tool', size=(31, 2), text_color='blue', font=('Arial', 30))],
+        [sg.Image(filename='SF_logo.png')],
         [sg.Text('Case information', size=(15, 1), font=('Arial', 16, 'bold'))],
         [sg.Text('Case Name:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_CASE_NAME_', font=('Arial', 14))],
         [sg.Text('Start Number:', size=(15, 1), font=('Arial', 14)),
