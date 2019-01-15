@@ -166,6 +166,7 @@ def show_window():
 
             # Else do not start the malware scan and fill in the blanks
             else:
+                file_size = int(file_size)
                 print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
                 print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + case_name + "\n",
                       "Start Number: " + "\t" +
