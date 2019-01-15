@@ -51,6 +51,29 @@ def get_pathname_and_hashes(file_size):
 
     return file_size
 
+def hashing_without_limitations():
+    for drive in drives: # Voor elke schijf in het systeem wordt de loop uitgevoerd
+
+        for root, dirs, files in os.walk(drive, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
+            try:
+                for name in files: # Voor elk bestand wordt de loop uitgevoerd
+                    filename = (os.path.join(root, name))
+                    blocksize = 65536
+                    path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                    print(path_dict)
+
+                    with open('path_and_hash.csv', 'a') as f:
+                        writer = csv.writer(f)
+                        for key, value in path_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
+                            writer.writerow([key, value])
+
+                    with open('system_hashes.txt', 'a') as e:
+                        for key in path_dict.keys(): # Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                            e.write('{}\n'.format(key))
+
+            except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
+                print(x)
+
 # Omschrijving van de functie staat in de summary
 def convert_md5_to_sha1():
     with open('path_and_hash.csv', 'r') as e: # Het bestand met de padnamen en MD5 hashes wordt geopend
