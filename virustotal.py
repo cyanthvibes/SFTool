@@ -13,8 +13,8 @@ import time
 import datetime
 import csv
 
-from SFTool.malware import Malware
-from SFTool.database_helper import insert_data_malware_detection
+from malware import Malware
+from database_helper import insert_data_malware_detection
 
 
 class Virustotal:

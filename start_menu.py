@@ -11,18 +11,19 @@ Summary: - The startmenu is the main of the SFTool
 
 import PySimpleGUI as sg  # pip install PySimpleGUI
 import datetime
+from psutil import virtual_memory
 from time import sleep
 
-from SFTool.case import Case
-from SFTool.database_helper import insert_data_case_information
-from SFTool.database_helper import select_database
-from SFTool.sys_specs import register_system_specs_to_database
-from SFTool.hashing import get_pathname_and_hashes
-from SFTool.compare_hashes import compare_hashes
-from SFTool.hashing import convert_md5_to_sha1
-from SFTool.network_checker import internet_on
-from SFTool.virustotal import register_malware_to_database
-from SFTool.malware_copy import malware_copy
+from case import Case
+from database_helper import insert_data_case_information
+from database_helper import select_database
+from sys_specs import register_system_specs_to_database
+from hashing import get_pathname_and_hashes
+from compare_hashes import compare_hashes
+from hashing import convert_md5_to_sha1
+from network_checker import internet_on
+from virustotal import register_malware_to_database
+from malware_copy import malware_copy
 
 
 # Shows the data of the database in the console
@@ -39,8 +40,33 @@ def update_status_mode(window, status_mode):
 
 
 def creating_memory_dump(window):
-    print("Creating memory dump...")
-    update_status_mode(window, "Creating memory dump...")
+    empty_row = sg.Text('', size=(1, 1))
+    mem = virtual_memory()
+    mem = mem.total
+
+    start = sg.Button('Start memory dump', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'))
+    cancel = sg.Button('Cancel', size=(5, 1), font=('Arial', 18), button_color=('black', 'white'))
+
+    layout2 = [
+        [sg.Text('Memory Dump', size=(31, 2), text_color='blue', font=('Arial', 30))],
+        [sg.Text(mem, size=(15, 1), font=('Arial', 14))],
+        [empty_row],
+        [start, cancel]
+    ]
+
+    window2 = sg.Window('SFT - Memory Dump').Layout(layout2)
+
+    while True:
+        event, value = window2.Read()
+        if event == 'Cancel':
+            window2.Close()
+            break
+
+        elif event == 'Start memory dump':
+            print("Creating memory dump...")
+            update_status_mode(window, "Creating memory dump...")
+
+    return window
 
 
 # The function scan malware is the main program of the SFTool: SFTool is scanning the system of availability of malware
@@ -89,7 +115,7 @@ def scan_malware(window, file_size):
 
         print('Copying malware to USB drive...')
         update_status_mode(window, "Copying malware to USB drive...")
-        malware_copy()    # Copies the malware to dictionary "malware_copies" on the USB-drive
+        malware_copy()  # Copies the malware to dictionary "malware_copies" on the USB-drive
 
         print('The malware scan is finished!')
         update_status_mode(window, "The malware scan is finished!")
@@ -108,8 +134,9 @@ def show_window():
     # create buttons
     start_malware = sg.Button('Start malware scan', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'),
                               enable_events=True, )
-    create_memory_dump = sg.Button('Create memory dump', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'),
-                              enable_events=True, )
+    create_memory_dump = sg.Button('Create memory dump', size=(17, 1), font=('Arial', 18),
+                                   button_color=('black', 'white'),
+                                   enable_events=True, )
     view_databasee = sg.Button('View Database', size=(13, 1), font=('Arial', 18), button_color=('black', 'white'))
     quit_startmenu = sg.Button('Quit', size=(5, 1), font=('Arial', 18), button_color=('black', 'white'))
 
@@ -118,12 +145,15 @@ def show_window():
         [sg.Text('SFTool - Synergy Forensics Triage Tool', size=(31, 2), text_color='blue', font=('Arial', 30))],
         [sg.Text('Case information', size=(15, 1), font=('Arial', 16, 'bold'))],
         [sg.Text('Case Name:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_CASE_NAME_', font=('Arial', 14))],
-        [sg.Text('Start Number:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_START_NUMBER', font=('Arial', 14))],
-        [sg.Text('Investigator:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_INVESTIGATOR_', font=('Arial', 14))],
+        [sg.Text('Start Number:', size=(15, 1), font=('Arial', 14)),
+         sg.InputText(key='_START_NUMBER', font=('Arial', 14))],
+        [sg.Text('Investigator:', size=(15, 1), font=('Arial', 14)),
+         sg.InputText(key='_INVESTIGATOR_', font=('Arial', 14))],
         [sg.Text('Comment:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_COMMENT_', font=('Arial', 14))],
         [empty_row],
         [sg.Text('Filters', size=(15, 1), font=('Arial', 16, 'bold'))],
-        [sg.Text('File Size Limit (MB):', size=(15,1), font=('Arial', 14)), sg.InputText(key='_FILE_SIZE_', font=('Arial', 14))],
+        [sg.Text('File Size Limit (MB):', size=(15, 1), font=('Arial', 14)),
+         sg.InputText(key='_FILE_SIZE_', font=('Arial', 14))],
         [empty_row],
         [sg.Text('Status: ', size=(15, 1), font=('Arial', 14)), status_mode],
         [empty_row],
@@ -135,7 +165,7 @@ def show_window():
     window = sg.Window('SFT - Start menu').Layout(layout)  # Shows the window to the user
 
     while True:
-        event, value = window.Read() # Read the Window
+        event, value = window.Read()  # Read the Window
         # Take appropriate action based on button
         if event == 'View Database':
             view_database()
@@ -176,7 +206,7 @@ def show_window():
                 insert_data_case_information(case_data)  # Write case information to database
 
                 result = scan_malware(window, file_size)
-                print(result)   # Print the status on the console
+                print(result)  # Print the status on the console
                 status_mode.Update(result)  # Update the status in the GUI
 
         elif event == 'Quit' or event is None:
