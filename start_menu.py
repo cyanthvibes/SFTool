@@ -49,7 +49,7 @@ def creating_memory_dump(window):
 
     layout2 = [
         [sg.Text('Memory Dump', size=(31, 2), text_color='blue', font=('Arial', 30))],
-        [sg.Text(mem, size=(15, 1), font=('Arial', 14))],
+        [sg.Text('Total system memory size: ', size=(25, 1), font=('Arial', 14)), sg.Text(mem, size=(15, 1), font=('Arial', 14))],
         [empty_row],
         [start, cancel]
     ]
