@@ -7,8 +7,13 @@ Summary: - get_pathname_and_hashes function
                 Making MD5 hashes of all the files on a system
                 Storing file paths and MD5 hashes in a CSV-file
                 Storing MD5 hashes in a TXT-file
+         - hashing_without_limitations function
+                If user input from 'startmenu.py' is empty, this function will be started
+                Making MD5 hashes of all the files on a system
+                Storing file paths and MD5 hashes in a CSV-file
+                Storing MD5 hashes in a TXT-file
          - convert_md5_to_sha1 function
-                Opening the 'virusshare.txt'-file which contains the infected MD5-hashes
+                Opening the 'virusshare_matches.txt'-file which contains the infected MD5-hashes
                 Finding the same hashes in the 'path_and_hash.csv'-file
                 Obtaining the path of these infected files
                 Making a SHA1-hash of the files and storing them in 'malware_hashes.txt'
@@ -51,6 +56,7 @@ def get_pathname_and_hashes(file_size):
 
     return file_size
 
+# Omschrijving van de functie staat in de summary
 def hashing_without_limitations():
     for drive in drives: # Voor elke schijf in het systeem wordt de loop uitgevoerd
 
