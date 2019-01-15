@@ -17,7 +17,7 @@ from SFTool.case import Case
 from SFTool.database_helper import insert_data_case_information
 from SFTool.database_helper import select_database
 from SFTool.sys_specs import register_system_specs_to_database
-from SFTool.hashing import get_pathname_and_hashes
+from SFTool.hashing import get_pathname_and_hashes, hashing_without_limitations
 from SFTool.compare_hashes import compare_hashes
 from SFTool.hashing import convert_md5_to_sha1
 from SFTool.network_checker import internet_on
@@ -54,12 +54,18 @@ def scan_malware(window, file_size):
         update_status_mode(window, "Registrating the system specifications... ")
         register_system_specs_to_database()  # Write system specifications to database
 
-        print('Calculating hashes... ' + "\n")
-        update_status_mode(window, "Calculating hashes...")
-        get_pathname_and_hashes(file_size)  # Calculate the md5 hashes of the files on the system
+        if file_size == 0:
+            print('Calculating hashes... ' + "\n")
+            update_status_mode(window, "Calculating hashes...")
+            hashing_without_limitations()  # Calculate the md5 hashes of the files on the system
+
+        elif file_size != 0:
+            print('Calculating hashes... ' + "\n")
+            update_status_mode(window, "Calculating hashes...")
+            get_pathname_and_hashes(file_size)  # Calculate the md5 hashes of the files on the system
 
         # Check if the system has an connection to the internet
-        if internet_on():
+        elif internet_on():
             print('The system is connected to the internet!' + "\n")
             update_status_mode(window, "The system is connected to the internet!")
 
@@ -160,12 +166,16 @@ def show_window():
                       "Required: case name, start number and investigator's name" + "\n")
 
             # Else if file size is not a number, then show a pop up
-            elif not file_size.isdigit():
+            elif not file_size.isdigit() and file_size != "":
                 sg.Popup("Please fill in a number for the file size(MB)")
                 print("Please fill in a number for the file size(MB)")
 
+
             # Else do not start the malware scan and fill in the blanks
             else:
+                if file_size == '':
+                    file_size = 0
+
                 file_size = int(file_size)
                 print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
                 print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + case_name + "\n",
