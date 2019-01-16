@@ -2,8 +2,9 @@ import subprocess
 import time
 
 def start_memory_dump():
-    subprocess.call(['C:\\Users\\Schellingerhoudt\\PycharmProjects\\ISCRIPT\\start_memory_dump.bat'])
-    time.sleep(12)
+    p = subprocess.Popen(['MagnetRAMCapture.exe'])
+    p.wait()
+
 
 def main():
     start_memory_dump()

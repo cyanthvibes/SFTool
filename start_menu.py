@@ -25,7 +25,7 @@ from network_checker import internet_on
 from virustotal import register_malware_to_database
 from malware_copy import malware_copy
 import shutil
-
+import subprocess
 
 # Shows the data of the database in the console
 def view_database():
@@ -40,50 +40,59 @@ def update_status_mode(window, status_mode):
     sleep(1)
 
 
-def creating_memory_dump(window):
-    empty_row = sg.Text('', size=(1, 1))
-    mem = virtual_memory()
-    mem = mem.total
+#def creating_memory_dump(window):
+    #empty_row = sg.Text('', size=(1, 1))
+    #mem = virtual_memory()
+    #mem = mem.total
 
 
-    total, used, free = shutil.disk_usage("\\")
+    #total, used, free = shutil.disk_usage("\\")
 
-    print("Total: %d GB" % (total // (2 ** 30)))
-    print("Used: %d GB" % (used // (2 ** 30)))
-    print("Free: %d GB" % (free // (2 ** 30)))
+    #print("Total: %d GB" % (total // (2 ** 30)))
+    #print("Used: %d GB" % (used // (2 ** 30)))
+    #print("Free: %d GB" % (free // (2 ** 30)))
 
-    start = sg.Button('Start memory dump', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'))
-    cancel = sg.Button('Cancel', size=(5, 1), font=('Arial', 18), button_color=('black', 'white'))
+    #start = sg.Button('Start memory dump', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'))
+    #cancel = sg.Button('Cancel', size=(5, 1), font=('Arial', 18), button_color=('black', 'white'))
 
-    layout2 = [
-        [sg.Text('Memory Dump', size=(31, 2), text_color='blue', font=('Arial', 30))],
-        [sg.Text('Total disk space: ', size=(25, 1), font=('Arial', 14)), sg.Text(total, size=(15, 1), font=('Arial', 14))],
-        [sg.Text('Used disk space: ', size=(25, 1), font=('Arial', 14)), sg.Text(used, size=(15, 1), font=('Arial', 14))],
-        [sg.Text('Free disk space: ', size=(25, 1), font=('Arial', 14)), sg.Text(free, size=(15, 1), font=('Arial', 14))],
-        [sg.Text('Total system memory size: ', size=(25, 1), font=('Arial', 14)), sg.Text(mem, size=(15, 1), font=('Arial', 14))],
-        [empty_row],
-        [sg.Text('Please enter an output destination: '), sg.InputText(key='path'), sg.FolderBrowse()],
-        [start, cancel]
-    ]
+    #layout2 = [
+     #   [sg.Text('Memory Dump', size=(31, 2), text_color='blue', font=('Arial', 30))],
+        #[sg.Text('Total disk space: ', size=(25, 1), font=('Arial', 14)), sg.Text(total, size=(15, 1), font=('Arial', 14))],
+       #[sg.Text('Used disk space: ', size=(25, 1), font=('Arial', 14)), sg.Text(used, size=(15, 1), font=('Arial', 14))],
+        #[sg.Text('Free disk space: ', size=(25, 1), font=('Arial', 14)), sg.Text(free, size=(15, 1), font=('Arial', 14))],
+        #[sg.Text('Total system memory size: ', size=(25, 1), font=('Arial', 14)), sg.Text(mem, size=(15, 1), font=('Arial', 14))],
+        #[empty_row],
+        #[sg.Text('Please insert additional external storage which has more free disk space than the amount of system memory: '), sg.InputText(key='path'), sg.FolderBrowse()],
+        #[start, cancel]
+    #]
 
-    window2 = sg.Window('SFT - Memory Dump').Layout(layout2)
 
-    while True:
-        event, value = window2.Read()
-        if event == 'Cancel':
-            window2.Close()
-            break
 
-        elif event == 'Start memory dump':
-            path = value['path']
-            if path == '':
-                sg.Popup('Please select an output destination')
-            else:
-                print("Creating memory dump...")
-                print(path)
-                update_status_mode(window, "Creating memory dump...")
+    #window2 = sg.Window('SFT - Memory Dump').Layout(layout2)
 
-    return window
+    #while True:
+        #event, value = window2.Read()
+        #if event == 'Cancel':
+        #    break
+
+        #elif event == 'Start memory dump':
+
+            #path = value['path']
+            #free = shutil.disk_usage(path)
+            #disk_size_from_path = int(free.free / (1024.0 ** 3))
+            #print(disk_size_from_path)
+            #mem = (mem / (1024.0 ** 3))
+            #3print(mem)
+            #if path == '':
+                #sg.Popup('Please select an output destination')
+            #elif disk_size_from_path < mem:
+                #sg.Popup('The external storage lacks free disk space. Please insert another drive.')
+            #else:
+                #print("Creating memory dump...")
+                #print(path)
+                #update_status_mode(window, "Creating memory dump...")
+
+    #return window
 
 
 # The function scan malware is the main program of the SFTool: SFTool is scanning the system of availability of malware
@@ -189,7 +198,10 @@ def show_window():
             view_database()
 
         elif event == 'Create memory dump':
-            creating_memory_dump(window)
+            window.Hide()
+            subprocess.call(['MagnetRAMCapture.exe'], shell=True)
+            window.UnHide()
+
 
         elif event == 'Start malware scan':
 
