@@ -24,6 +24,7 @@ from hashing import convert_md5_to_sha1
 from network_checker import internet_on
 from virustotal import register_malware_to_database
 from malware_copy import malware_copy
+import shutil
 
 
 # Shows the data of the database in the console
@@ -44,11 +45,21 @@ def creating_memory_dump(window):
     mem = virtual_memory()
     mem = mem.total
 
+
+    total, used, free = shutil.disk_usage("\\")
+
+    print("Total: %d GB" % (total // (2 ** 30)))
+    print("Used: %d GB" % (used // (2 ** 30)))
+    print("Free: %d GB" % (free // (2 ** 30)))
+
     start = sg.Button('Start memory dump', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'))
     cancel = sg.Button('Cancel', size=(5, 1), font=('Arial', 18), button_color=('black', 'white'))
 
     layout2 = [
         [sg.Text('Memory Dump', size=(31, 2), text_color='blue', font=('Arial', 30))],
+        [sg.Text('Total disk space: ', size=(25, 1), font=('Arial', 14)), sg.Text(total, size=(15, 1), font=('Arial', 14))],
+        [sg.Text('Used disk space: ', size=(25, 1), font=('Arial', 14)), sg.Text(used, size=(15, 1), font=('Arial', 14))],
+        [sg.Text('Free disk space: ', size=(25, 1), font=('Arial', 14)), sg.Text(free, size=(15, 1), font=('Arial', 14))],
         [sg.Text('Total system memory size: ', size=(25, 1), font=('Arial', 14)), sg.Text(mem, size=(15, 1), font=('Arial', 14))],
         [empty_row],
         [sg.Text('Please enter an output destination: '), sg.InputText(key='path'), sg.FolderBrowse()],

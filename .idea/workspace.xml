@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/start_menu.py" line="61" />
+    <bookmark url="file://$PROJECT_DIR$/start_menu.py" line="72" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9aca5264-1dca-478c-b45f-7ff9e2a8655b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/start_menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/start_menu.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,15 +15,15 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/SFTool$start_menu.coverage" NAME="start_menu Coverage Results" MODIFIED="1547577261594" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SFTool$start_menu.coverage" NAME="start_menu Coverage Results" MODIFIED="1547644576167" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/start_menu.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="136" column="18" lean-forward="true" selection-start-line="136" selection-start-column="18" selection-end-line="136" selection-end-column="18" />
+            <state relative-caret-position="89">
+              <caret line="30" column="20" lean-forward="true" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
               <folding>
                 <element signature="e#573#624#0" expanded="true" />
               </folding>
@@ -186,18 +187,20 @@
       <updated>1547556564214</updated>
       <workItem from="1547556565415" duration="323000" />
       <workItem from="1547556896314" duration="643000" />
-      <workItem from="1547562573961" duration="8305000" />
+      <workItem from="1547562573961" duration="8508000" />
+      <workItem from="1547582328948" duration="4000" />
+      <workItem from="1547637707650" duration="2273000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9271000" />
+    <option name="totallyTimeSpent" value="11751000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1734" height="1407" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25567502" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26164874" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -224,6 +227,25 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/start_menu.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="89">
+          <caret line="30" column="20" lean-forward="true" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
+          <folding>
+            <element signature="e#573#624#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/memory_dump.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#17#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/case.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -245,25 +267,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="15" column="5" selection-start-line="15" selection-start-column="5" selection-end-line="15" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/memory_dump.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/start_menu.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="136" column="18" lean-forward="true" selection-start-line="136" selection-start-column="18" selection-end-line="136" selection-end-column="18" />
-          <folding>
-            <element signature="e#573#624#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
