@@ -34,6 +34,7 @@ def initialize_database():
     c.execute("CREATE TABLE IF NOT EXISTS case_information(case_name TEXT, start_number REAL, investigator_name TEXT, "
               "comment TEXT, time TEXT)")
     c.execute("CREATE TABLE IF NOT EXISTS virusshare_hashes(hash TEXT)")
+    c.execute("CREATE INDEX virusshare_index ON virusshare_hashes(hash)")
 
     conn.commit()  # Commit the queries
     conn.close()  # Close the connection with the database
@@ -94,10 +95,10 @@ def insert_data_virusshare_hashes():
 
 # Selects the system_hash which is in virusshare
 def select_virusshare_hashes_by_system_hash(system_hash):
+
     conn = get_connection("SFT.db")  # Get a connection with the database
     c = conn.cursor()  # Create a cursor object to call its execute() method to perform SQL commands
-
-    c.execute("SELECT * FROM virusshare_hashes WHERE hash=?", (system_hash,))   # Compare system hash with hash from
+    c.execute("SELECT hash FROM virusshare_hashes WHERE hash=?", (system_hash,))   # Compare system hash with hash from
     # Virusshare
 
     hash = c.fetchone()
