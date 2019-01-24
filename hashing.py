@@ -20,7 +20,7 @@ Summary: - get_pathname_and_hashes function
 
 """
 
-import hashlib, os, sys, csv
+import hashlib, os, csv
 import win32api # pip install pypiwin32
 
 drives = win32api.GetLogicalDriveStrings()  # Berekend het aantal schijven
