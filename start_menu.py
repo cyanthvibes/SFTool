@@ -5,6 +5,7 @@ Summary: - The startmenu is the main of the SFTool
          - Then it shows the GUI of the SFTool
          - The user could choose three options in the GUI: "View database", "Quit" and "Start malware scan"
          - When the user clicks on "Start malware scan", SFTool is scanning the system of availability of malware
+         - When the user clicks on "Create memory dump", SFTool runs MagnetRAMCapture
          - When the user clicks on "View database", the database (SFT.db) is shown in the console
          - When the user clicks on "Quit", the GUI closes
 """
@@ -12,6 +13,7 @@ Summary: - The startmenu is the main of the SFTool
 import PySimpleGUI as sg  # pip install PySimpleGUI
 import datetime
 from time import sleep
+import subprocess
 
 from SFTool.case import Case
 from SFTool.database_helper import insert_data_case_information
@@ -39,13 +41,13 @@ def update_status_mode(window, status_mode):
 
 
 def creating_memory_dump(window):
-    print("Creating memory dump...")
-    update_status_mode(window, "Creating memory dump...")
+    window.Hide()
+    subprocess.call(['MagnetRAMCapture.exe'], shell=True)
+    window.UnHide()
 
 
 # The function scan malware is the main program of the SFTool: SFTool is scanning the system of availability of malware
 def scan_malware(window, file_size):
-    result = 'OK'
     try:
         print("The malware scan has been started" + "\n")
         update_status_mode(window, "The malware scan has been started")
@@ -64,47 +66,40 @@ def scan_malware(window, file_size):
             update_status_mode(window, "Calculating hashes...")
             get_pathname_and_hashes(file_size)  # Calculate the md5 hashes of the files on the system
 
-        # Check if the system has an connection to the internet
-        elif internet_on():
-            print('The system is connected to the internet!' + "\n")
-            update_status_mode(window, "The system is connected to the internet!")
+        print('Comparing system hashes with VirusShare... ' + "\n")
+        update_status_mode(window, "Comparing system hashes with VirusShare... ")
+        malware_found = compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of
+        # VirusShare)
 
-            print('Comparing system hashes with VirusShare... ' + "\n")
-            update_status_mode(window, "Comparing system hashes with VirusShare... ")
-            compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
-
+        if malware_found:
             print('Converting MD5 to SHA1...' + "\n")
             update_status_mode(window, "Converting MD5 to SHA1...")
             convert_md5_to_sha1()  # Converts the malware md5 hashes to sha1
 
-            print("\n" + 'Checking malware name in VirusTotal... ' + "\n")
-            update_status_mode(window, "Checking malware name in VirusTotal...  ")
-            register_malware_to_database()  # Online database: VirusTotal (writes the malware information to the
-            # database)
-        elif not internet_on():
-            print('The system is not connected to the internet!' + "\n")
-            update_status_mode(window, "The system is not connected to the internet!")
+            # Check if the system has an connection to the internet
+            if internet_on():
+                print('The system is connected to the internet!' + "\n")
+                update_status_mode(window, "The system is connected to the internet!")
 
-            print('Comparing system hashes with VirusShare... ' + "\n")
-            update_status_mode(window, "Comparing system hashes with VirusShare... ")
-            compare_hashes()  # Offline database: virusshare (compare system hashes with the hahses of VirusShare)
+                print("\n" + 'Checking malware name in VirusTotal... ' + "\n")
+                update_status_mode(window, "Checking malware name in VirusTotal...  ")
+                register_malware_to_database()  # Online database: VirusTotal (writes the malware information to the
+                # database)
 
-            print('Converting MD5 to SHA1...' + "\n")
-            update_status_mode(window, "Converting MD5 to SHA1...")
-            convert_md5_to_sha1()  # Converts the malware md5 hashes to sha1
+            print('Copying malware to USB drive...')
+            update_status_mode(window, "Copying malware to USB drive...")
+            malware_copy()  # Copies the malware to dictionary "malware_copies" on the USB-drive
 
-        print('Copying malware to USB drive...')
-        update_status_mode(window, "Copying malware to USB drive...")
-        malware_copy()    # Copies the malware to dictionary "malware_copies" on the USB-drive
+            print('The malware scan has finished: malware found!')
+            update_status_mode(window, "The malware scan has finished: malware found!")
 
-        print('The malware scan is finished!')
-        update_status_mode(window, "The malware scan is finished!")
+        else:
+            print('The malware scan has finished: no malware found!' + "\n")
+            update_status_mode(window, "The malware scan has finished: no malware found!")
 
     except Exception as e:
         print(e)
-        result = e
-
-    return result
+        update_status_mode(window, e)
 
 
 # Shows the GUI of the SFTool
@@ -150,7 +145,6 @@ def show_window():
             creating_memory_dump(window)
 
         elif event == 'Start malware scan':
-
             case_name = value['_CASE_NAME_']
             start_number = value['_START_NUMBER']
             investigator_name = value['_INVESTIGATOR_']
@@ -158,7 +152,7 @@ def show_window():
             file_size = value['_FILE_SIZE_']
             time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
-            # If case information is filled then start the malware scan
+            # If case information is not filled then show a pop up
             if case_name == '' or start_number == '' or investigator_name == '':
                 sg.Popup("Fill in the case data on the start menu. " + "\n" +
                          "Required: case name, start number and investigator's name" + "\n")
@@ -170,10 +164,9 @@ def show_window():
                 sg.Popup("Please fill in a number for the file size(MB)")
                 print("Please fill in a number for the file size(MB)")
 
-
-            # Else do not start the malware scan and fill in the blanks
+            # Else start the malware scan
             else:
-                if file_size == '':
+                if file_size == '':     # If file size is not filled by the user then file size = 0 (scan whole system)
                     file_size = 0
 
                 file_size = int(file_size)
@@ -186,9 +179,7 @@ def show_window():
                 case_data = Case(case_name, start_number, investigator_name, comment, time)
                 insert_data_case_information(case_data)  # Write case information to database
 
-                result = scan_malware(window, file_size)
-                print(result)   # Print the status on the console
-                status_mode.Update(result)  # Update the status in the GUI
+                scan_malware(window, file_size)
 
         elif event == 'Quit' or event is None:
             window.Close()
