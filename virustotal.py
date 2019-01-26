@@ -116,7 +116,7 @@ def register_malware_to_database():
                 hash = line.rstrip()
                 if is_valid_hash(hash):
                     time_detection = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-                    malware_name = str(get_malware_name(key, line.rstrip()))
+                    malware_name = str(get_malware_name(key, hash))
                     path = ''
                     with open('malware_sha_path.csv', 'r') as e:  # Opens file with path and sha1 hashes of the malware
                         malware_dict = dict(filter(None, csv.reader(e)))  # Convert CSV-file to a dictionary
