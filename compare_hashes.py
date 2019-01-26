@@ -11,6 +11,7 @@ from SFTool.database_helper import select_virusshare_hashes_by_system_hash
 
 # Omschrijving van de functie staat in de summary
 def compare_hashes():
+    malware_found = False
     with open('system_hashes.txt', 'r') as hashes: # Opent 'system_hashes.txt'
         for system_hash in hashes:
             system_hash = system_hash.strip()
@@ -18,13 +19,14 @@ def compare_hashes():
             if hash_from_database != '':
                 print("Virusshare match: " + str(hash_from_database))
                 with open('virusshare_matches.txt', 'a') as e: # Open het 'virusshare_matches.txt'
+                    malware_found = True
                     e.write('{}\n'.format(hash_from_database)) # Schrijf de overeenkomende hash naar het bestand
+    return malware_found
 
 
 def main():
     compare_hashes()
-
+    
 
 if __name__ == '__main__':
     main()
-  
