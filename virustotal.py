@@ -15,6 +15,7 @@ import csv
 
 from SFTool.malware import Malware
 from SFTool.database_helper import insert_data_malware_detection
+from SFTool.ranking_malware import ranking_malware_by_positives
 
 
 class Virustotal:
@@ -95,6 +96,9 @@ def get_malware_name(key, hash):
                 print(hash + ' is malicious')
                 result = json_response["scans"]["F-Secure"]["result"]   # Get the malware name from the virusscanner:
                 # F-Secure
+
+                total = json_response["total"]
+                ranking_malware_by_positives(str(positives), str(total), str(result))
         else:
             print(hash + ' could not be searched. Please try again later.')
             result = None
