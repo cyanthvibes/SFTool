@@ -8,6 +8,8 @@ Summary: - The startmenu is the main of the SFTool
          - When the user clicks on "Create memory dump", SFTool runs MagnetRAMCapture
          - When the user clicks on "View database", the database (SFT.db) is shown in the console
          - When the user clicks on "Quit", the GUI closes
+
+Update: Daan Schellingerhoudt, s1108356 added creating_memory_dump
 """
 
 import PySimpleGUI as sg  # pip install PySimpleGUI
@@ -40,6 +42,7 @@ def update_status_mode(window, status_mode):
     sleep(1)
 
 
+# Starts the program MagnetRAMCapture.exe and hides the GUI while it runs
 def creating_memory_dump(window):
     window.Hide()
     subprocess.call(['MagnetRAMCapture.exe'], shell=True)
