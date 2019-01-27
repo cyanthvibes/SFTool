@@ -17,16 +17,16 @@ import datetime
 from time import sleep
 import subprocess
 
-from SFTool.case import Case
-from SFTool.database_helper import insert_data_case_information
-from SFTool.database_helper import select_database
-from SFTool.sys_specs import register_system_specs_to_database
-from SFTool.hashing import get_pathname_and_hashes, hashing_without_limitations
-from SFTool.compare_hashes import compare_hashes
-from SFTool.hashing import convert_md5_to_sha1
-from SFTool.network_checker import internet_on
-from SFTool.virustotal import register_malware_to_database
-from SFTool.malware_copy import malware_copy
+from case import Case
+from database_helper import insert_data_case_information
+from database_helper import select_database
+from sys_specs import register_system_specs_to_database
+from hashing import get_pathname_and_hashes, hashing_without_limitations
+from compare_hashes import compare_hashes
+from hashing import convert_md5_to_sha1
+from network_checker import internet_on
+from virustotal import register_malware_to_database
+from malware_copy import malware_copy
 
 
 # Shows the data of the database in the console

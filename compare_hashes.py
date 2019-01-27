@@ -6,7 +6,7 @@ Summary: - compare_hashes
                 The "virusshare_matches" file will be opened in hashing.py
 """
 
-from SFTool.database_helper import select_virusshare_hashes_by_system_hash
+from database_helper import select_virusshare_hashes_by_system_hash
 
 
 # Omschrijving van de functie staat in de summary

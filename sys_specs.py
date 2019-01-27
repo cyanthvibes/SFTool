@@ -4,7 +4,7 @@ Summary: Writes system/volume specifications (serial number, disk name and file 
 """
 
 import wmi  # pip install wmi
-from SFTool.database_helper import insert_data_system_specifications
+from database_helper import insert_data_system_specifications
 
 
 # The class System contains system specifications: serial number, disk name and file fomat
