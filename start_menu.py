@@ -153,7 +153,7 @@ def show_window():
             investigator_name = value['_INVESTIGATOR_']
             comment = value['_COMMENT_']
             file_size = value['_FILE_SIZE_']
-            time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+            time = datetime.datetime.now()
 
             # If case information is not filled then show a pop up
             if case_name == '' or start_number == '' or investigator_name == '':
@@ -173,7 +173,7 @@ def show_window():
                     file_size = 0
 
                 file_size = int(file_size)
-                print("Time: " + datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+                print("Time: " + str(time))
                 print("Event: " + event + "\n" + "\n", "Case Name: " + "\t" + case_name + "\n",
                       "Start Number: " + "\t" +
                       start_number + "\n", "Investigator: " + "\t" + investigator_name + "\n", "Comment: " +
