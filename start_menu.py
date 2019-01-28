@@ -16,6 +16,7 @@ import PySimpleGUI as sg  # pip install PySimpleGUI
 import datetime
 from time import sleep
 import subprocess
+import sys
 
 from case import Case
 from database_helper import insert_data_case_information
@@ -28,6 +29,8 @@ from network_checker import internet_on
 from virustotal import register_malware_to_database
 from malware_copy import malware_copy
 
+# Logs everything from the console to a text file
+sys.stdout = open('console_log.txt', 'w')
 
 # Shows the data of the database in the console
 def view_database():
@@ -60,13 +63,13 @@ def scan_malware(window, file_size):
         register_system_specs_to_database()  # Write system specifications to database
 
         if file_size == 0:
-            print('Calculating hashes... ' + "\n")
-            update_status_mode(window, "Calculating hashes...")
+            print('Calculating hashes... (this might take a while)' + "\n")
+            update_status_mode(window, "Calculating hashes... (this might take a while)")
             hashing_without_limitations()  # Calculate the md5 hashes of the files on the system
 
         elif file_size != 0:
-            print('Calculating hashes... ' + "\n")
-            update_status_mode(window, "Calculating hashes...")
+            print('Calculating hashes... (this might take a while)' + "\n")
+            update_status_mode(window, "Calculating hashes... (this might take a while")
             get_pathname_and_hashes(file_size)  # Calculate the md5 hashes of the files on the system
 
         print('Comparing system hashes with VirusShare... ' + "\n")
