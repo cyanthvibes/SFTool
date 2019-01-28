@@ -41,7 +41,7 @@ def get_pathname_and_hashes(file_size):
                     if os.path.getsize(filename) <= file_size: # Als het bestand kleiner of gelijk is aan de ingevoerde waarde
                         blocksize = 65536
                         path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
-                        print(str(time) + str(path_dict))
+                        print(str(time) + " " + str(path_dict))
 
                         with open('path_and_hash.csv', 'a') as f:
                             writer = csv.writer(f)
@@ -68,7 +68,7 @@ def hashing_without_limitations():
                     filename = (os.path.join(root, name))
                     blocksize = 65536
                     path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
-                    print(str(time) + str(path_dict))
+                    print(str(time) + " " + str(path_dict))
 
                     with open('path_and_hash.csv', 'a') as f:
                         writer = csv.writer(f)
