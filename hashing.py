@@ -36,7 +36,7 @@ def get_pathname_and_hashes(file_size):
         for root, dirs, files in os.walk(drive, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
             try:
                 for name in files: # Voor elk bestand wordt de loop uitgevoerd
-                    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
+                    time = datetime.datetime.now() # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
                     filename = (os.path.join(root, name))
                     if os.path.getsize(filename) <= file_size: # Als het bestand kleiner of gelijk is aan de ingevoerde waarde
                         blocksize = 65536
@@ -64,7 +64,7 @@ def hashing_without_limitations():
         for root, dirs, files in os.walk(drive, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
             try:
                 for name in files: # Voor elk bestand wordt de loop uitgevoerd
-                    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
+                    time = datetime.datetime.now() # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
                     filename = (os.path.join(root, name))
                     blocksize = 65536
                     path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
