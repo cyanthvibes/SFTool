@@ -148,12 +148,4 @@ def drop_database():
 
     conn.commit()  # Commit the queries
     conn.close()  # Close the connection with the database
-
-
-def main():
-    initialize_database()
-    # insert_data_virusshare_hashes()
-
-
-if __name__ == '__main__':
-    main()
+  
