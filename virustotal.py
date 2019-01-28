@@ -3,7 +3,8 @@ Author: Mariska Temming, S1106242
 Summary: - The class Virustotal contains virustotal information: hash (the malware hash),
             key (the public key of virustotal), input (a input file with the malware hashes)
          - Checks the key, hash and file if they are valid
-         -
+         - get_malware_name(): sends a request to VirusTotal. VirusTotal gives a response in 
+           json format. get_malware_name() gets the malware name from the virusscanner F-Secure.
 """
 
 import json
@@ -36,7 +37,7 @@ class Virustotal:
 
 # Checks if key is valid
 def is_valid_key(key):
-    if len(key) == 64:
+    if len(key) == 64:    # Length of the public key is 64 characters  
         return True
     else:
         print("This key is not valid.")
@@ -75,7 +76,7 @@ def get_malware_name(key, hash):
     params = {'apikey': key, 'resource': hash}
     url = requests.get('https://www.virustotal.com/vtapi/v2/file/report', params=params)   # Send request to VirusTotal
     try:
-        json_response = url.json()
+        json_response = url.json()   # VirusTotal response convert to json format 
     except json.decoder.JSONDecodeError as e:
         print(e)
     print("json: " + str(json_response))   # Print the result of the request to VirusTotal in json format in the console
@@ -131,11 +132,3 @@ def register_malware_to_database():
                     insert_data_malware_detection(malware)  # Write the malware detection data to the database
 
                 time.sleep(15)  # There is a sleep needed because of the 4 requests per minut to VirusTotal
-
-
-def main():
-    register_malware_to_database()
-
-
-if __name__ == '__main__':
-    main()
