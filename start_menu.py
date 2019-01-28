@@ -111,7 +111,6 @@ def show_window():
                               enable_events=True, )
     create_memory_dump = sg.Button('Create memory dump', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'),
                               enable_events=True, )
-    view_databasee = sg.Button('View Database', size=(13, 1), font=('Arial', 18), button_color=('black', 'white'))
     quit_startmenu = sg.Button('Quit', size=(5, 1), font=('Arial', 18), button_color=('black', 'white'))
 
     # Layout the design of the GUI
