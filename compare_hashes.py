@@ -22,11 +22,3 @@ def compare_hashes():
                     malware_found = True
                     e.write('{}\n'.format(hash_from_database)) # Schrijf de overeenkomende hash naar het bestand
     return malware_found
-
-
-def main():
-    compare_hashes()
-    
-
-if __name__ == '__main__':
-    main()
