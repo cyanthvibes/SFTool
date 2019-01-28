@@ -14,11 +14,3 @@ def internet_on():
     except Exception as e:
         print(e)
         return False
-
-
-def main():
-    print(internet_on())
-
-
-if __name__ == '__main__':
-    main()
