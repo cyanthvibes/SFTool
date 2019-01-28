@@ -20,7 +20,7 @@ Summary: - get_pathname_and_hashes function
 
 """
 
-import hashlib, os, csv
+import hashlib, os, csv, datetime
 import win32api # pip install pypiwin32
 
 drives = win32api.GetLogicalDriveStrings()  # Berekend het aantal schijven
@@ -36,19 +36,20 @@ def get_pathname_and_hashes(file_size):
         for root, dirs, files in os.walk(drive, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
             try:
                 for name in files: # Voor elk bestand wordt de loop uitgevoerd
+                    time = datetime.datetime.now() # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
                     filename = (os.path.join(root, name))
-                    if os.path.getsize(filename) <= file_size:
+                    if os.path.getsize(filename) <= file_size: # Als het bestand kleiner of gelijk is aan de ingevoerde waarde
                         blocksize = 65536
                         path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
-                        print(path_dict)
+                        print(str(time) + str(path_dict))
 
                         with open('path_and_hash.csv', 'a') as f:
                             writer = csv.writer(f)
-                            for key, value in path_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
+                            for key, value in path_dict.items(): # De items van path_dict (keys en values) worden naar dit bestand toe geschreven
                                 writer.writerow([key, value])
 
                         with open('system_hashes.txt', 'a') as e:
-                            for key in path_dict.keys(): # Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                            for key in path_dict.keys(): # Elke key (de hashes) in path_dict worden naar dit bestand toegeschreven
                                 e.write('{}\n'.format(key))
 
             except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
@@ -63,18 +64,19 @@ def hashing_without_limitations():
         for root, dirs, files in os.walk(drive, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
             try:
                 for name in files: # Voor elk bestand wordt de loop uitgevoerd
+                    time = datetime.datetime.now() # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
                     filename = (os.path.join(root, name))
                     blocksize = 65536
                     path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
-                    print(path_dict)
+                    print(str(time) + str(path_dict))
 
                     with open('path_and_hash.csv', 'a') as f:
                         writer = csv.writer(f)
-                        for key, value in path_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
+                        for key, value in path_dict.items(): # De items van path_dict(keys en values) worden naar dit bestand toe geschreven
                             writer.writerow([key, value])
 
                     with open('system_hashes.txt', 'a') as e:
-                        for key in path_dict.keys(): # Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                        for key in path_dict.keys(): # Elke key in path_dict (de hashes) worden naar dit bestand toegeschreven
                             e.write('{}\n'.format(key))
 
             except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
@@ -104,9 +106,9 @@ def convert_md5_to_sha1():
     return checksum
 
 def main():
-    get_pathname_and_hashes()
+    # get_pathname_and_hashes()
+    # hashing_without_limitations()
     convert_md5_to_sha1()
-
 
 if __name__ == '__main__':
     main()
