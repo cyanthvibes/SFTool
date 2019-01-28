@@ -104,11 +104,3 @@ def convert_md5_to_sha1():
                 writer.writerow([checksum, padnaam]) # De SHA1 waarde en de padnaam van de malware worden weggeschreven naar het bestand
 
     return checksum
-
-def main():
-    # get_pathname_and_hashes()
-    # hashing_without_limitations()
-    convert_md5_to_sha1()
-
-if __name__ == '__main__':
-    main()
