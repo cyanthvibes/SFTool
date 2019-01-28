@@ -6,7 +6,6 @@ Summary: - The startmenu is the main of the SFTool
          - The user could choose three options in the GUI: "View database", "Quit" and "Start malware scan"
          - When the user clicks on "Start malware scan", SFTool is scanning the system of availability of malware
          - When the user clicks on "Create memory dump", SFTool runs MagnetRAMCapture
-         - When the user clicks on "View database", the database (SFT.db) is shown in the console
          - When the user clicks on "Quit", the GUI closes
 
 Update: Daan Schellingerhoudt, s1108356 added creating_memory_dump
@@ -31,11 +30,6 @@ from malware_copy import malware_copy
 
 # Logs everything from the console to a text file
 sys.stdout = open('console_log.txt', 'w')
-
-# Shows the data of the database in the console
-def view_database():
-    select_database()
-    return None
 
 
 # Update the status mode in the GUI
@@ -144,10 +138,7 @@ def show_window():
     while True:
         event, value = window.Read() # Read the Window
         # Take appropriate action based on button
-        if event == 'View Database':
-            view_database()
-
-        elif event == 'Create memory dump':
+        if event == 'Create memory dump':
             creating_memory_dump(window)
 
         elif event == 'Start malware scan':
