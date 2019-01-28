@@ -128,7 +128,7 @@ def show_window():
         [sg.Text('Status: ', size=(15, 1), font=('Arial', 14)), status_mode],
         [empty_row],
         [empty_row],
-        [view_databasee, empty_row, quit_startmenu, empty_row, create_memory_dump, start_malware],
+        [quit_startmenu, empty_row, create_memory_dump, start_malware],
         [empty_row]
     ]
 
