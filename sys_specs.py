@@ -39,12 +39,3 @@ def register_system_specs_to_database():
         print("serial_number: " + system_specs.serial_number)
         insert_data_system_specifications(system_specs)   # Write the system specifications to the database
         print("\n")
-
-
-def main():
-    register_system_specs_to_database()
-
-
-if __name__ == '__main__':
-    main()
-
