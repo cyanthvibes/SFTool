@@ -59,27 +59,27 @@ def scan_malware(window, file_size, single_file, single_folder):
 
         if file_size == 0 and single_file == '' and single_folder == '':
             print('Calculating hashes... ' + "\n")
-            update_status_mode(window, "Calculating hashes...")
+            update_status_mode(window, "Calculating hashes... (this might take a while)")
             hashing_without_limitations()  # Calculate the md5 hashes of the files on the system
 
         elif file_size != 0 and single_folder != '':
             print('Calculating hashes... ' + "\n")
-            update_status_mode(window, "Calculating hashes...")
+            update_status_mode(window, "Calculating hashes... (this might take a while)")
             hash_folder_limited_size(file_size, single_folder)  # Calculate the md5 hashes of the files on the of the selected folder
 
         elif file_size != 0:
             print('Calculating hashes... ' + "\n")
-            update_status_mode(window, "Calculating hashes...")
+            update_status_mode(window, "Calculating hashes... (this might take a while)")
             get_pathname_and_hashes(file_size)  # Calculate the md5 hashes of the files on the system
 
         elif single_folder != '':
             print('Calculating hashes... ' + "\n")
-            update_status_mode(window, "Calculating hashes...")
+            update_status_mode(window, "Calculating hashes... (this might take a while)")
             hash_single_folder(single_folder)  # Calculate the md5 hashes of the selected folder
 
         elif single_file != '':
             print('Calculating hashes... ' + "\n")
-            update_status_mode(window, "Calculating hashes...")
+            update_status_mode(window, "Calculating hashes... (this might take a while)")
             hash_single_file(single_file)  # Calculate the md5 hash of the selected file
 
         print('Comparing system hashes with VirusShare... ' + "\n")
