@@ -19,7 +19,6 @@ import sys
 
 from case import Case
 from database_helper import insert_data_case_information
-from database_helper import select_database
 from sys_specs import register_system_specs_to_database
 from hashing import get_pathname_and_hashes, hashing_without_limitations
 from compare_hashes import compare_hashes
