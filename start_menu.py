@@ -1,15 +1,14 @@
 """
 Author: Mariska Temming, S1106242
 Summary: - The startmenu is the main of the SFTool
-         - First it makes a memory dump of the system
-         - Then it shows the GUI of the SFTool
-         - The user could choose three options in the GUI: "View database", "Quit" and "Start malware scan"
+         - It shows the GUI of the SFTool
+         - The user could choose three options in the GUI: "Quit", "Create memory dump" and "Start malware scan"
          - When the user clicks on "Start malware scan", SFTool is scanning the system of availability of malware
          - When the user clicks on "Create memory dump", SFTool runs MagnetRAMCapture
          - When the user clicks on "Quit", the GUI closes
-
 Update: Daan Schellingerhoudt, s1108356 added creating_memory_dump
 """
+
 
 import PySimpleGUI as sg  # pip install PySimpleGUI
 import datetime
