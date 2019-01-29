@@ -62,7 +62,7 @@ def scan_malware(window, file_size):
 
         elif file_size != 0:
             print('Calculating hashes... (this might take a while)' + "\n")
-            update_status_mode(window, "Calculating hashes... (this might take a while")
+            update_status_mode(window, "Calculating hashes... (this might take a while)")
             get_pathname_and_hashes(file_size)  # Calculate the md5 hashes of the files on the system
 
         print('Comparing system hashes with VirusShare... ' + "\n")
