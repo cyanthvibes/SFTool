@@ -155,7 +155,7 @@ def show_window():
                 print("Fill in the case data on the start menu. " + "\n" +
                       "Required: case name, start number and investigator's name" + "\n")
 
-            # Else if file size is not a number, then show a pop up
+            # Else if file size is not a number and not empty, then show a pop up
             elif not file_size.isdigit() and file_size != "":
                 sg.Popup("Please fill in a number for the file size(MB)")
                 print("Please fill in a number for the file size(MB)")
