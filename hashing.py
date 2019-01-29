@@ -88,16 +88,16 @@ def hash_single_file(single_file):
 
         with open('path_and_hash.csv', 'a') as f:
             writer = csv.writer(f)
-            # The items of path_dict (keys en values) will be saved in a text-file
+            # The items of path_dict (key en value) will be saved in a text-file
             for key, value in path_dict.items():
                 writer.writerow([key, value])
 
         with open('system_hashes.txt', 'a') as e:
-            # Every key (the hashes) in path_dict will be saved in a text-file
+            # The key (the hash) in path_dict will be saved in a text-file
             for key in path_dict.keys():
                 e.write('{}\n'.format(key))
 
-    # If these errors occur while scanning a file, this file will be skipped stopt
+    # If these errors occur while scanning the file, this file will be skipped stopt
     except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x:
         print(x)
 
