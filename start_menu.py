@@ -18,6 +18,8 @@ import datetime
 from time import sleep
 import subprocess
 import sys
+import os
+import shutil
 
 from case import Case
 from database_helper import insert_data_case_information
@@ -31,7 +33,7 @@ from malware_copy import malware_copy
 
 # Logs everything from the console to a text file
 sys.stdout = open('console_log.txt', 'w')
-
+case_name = ''
 
 # Update the status mode in the GUI
 def update_status_mode(window, status_mode):
@@ -112,7 +114,45 @@ def scan_malware(window, file_size, single_file, single_folder):
         else:
             print('The malware scan has finished: no malware found!' + "\n")
             update_status_mode(window, "The malware scan has finished: no malware found!")
+         
+         global case_name
+        directory = case_name
 
+        if os.path.exists(directory):
+            case_name += '_duplicate'
+            directory = case_name
+
+        os.mkdir(directory)
+        try:
+            shutil.move('malware_copies', directory)
+        except:
+            pass
+
+        try:
+            shutil.move('system_hashes.txt', directory)
+        except:
+            pass
+
+        try:
+            shutil.move('path_and_hash.csv', directory)
+        except:
+            pass
+
+        try:
+            shutil.move('virusshare_matches.txt', directory)
+        except:
+            pass
+
+        try:
+            shutil.move('malware_hashes.txt', directory)
+        except:
+            pass
+
+        try:
+            shutil.move('malware_sha_hashes.csv', directory)
+        except:
+            pass
+         
     except Exception as e:
         print(e)
         update_status_mode(window, e)
