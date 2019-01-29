@@ -3,8 +3,8 @@ Author: Mariska Temming, S1106242
 Summary: - The class Virustotal contains virustotal information: hash (the malware hash),
             key (the public key of virustotal), input (a input file with the malware hashes)
          - Checks the key, hash and file if they are valid
-         - get_malware_name(): sends a request to VirusTotal. VirusTotal gives a response in 
-           json format. get_malware_name() gets the malware name from the virusscanner F-Secure.
+         - get_malware_name(): sends a request to VirusTotal. VirusTotal gives a response in json format.
+           get_malware_name() gets the malware name of the virusscanner F-Secure.
 """
 
 import json
@@ -14,16 +14,16 @@ import time
 import datetime
 import csv
 
-from malware import Malware
-from database_helper import insert_data_malware_detection
-from ranking_malware import ranking_malware_by_positives
+from SFTool.malware import Malware
+from SFTool.database_helper import insert_data_malware_detection
+from SFTool.ranking_malware import ranking_malware_by_positives
 
 
 class Virustotal:
-    def __init__(self, hash, key, input):
+    def __init__(self, hash, key, input_file):
         self.hash = hash
         self.key = key
-        self.input = input
+        self.input_file = input_file
 
     def get_hash(self):
         return self.hash
@@ -31,13 +31,13 @@ class Virustotal:
     def get_key(self):
         return self.key
 
-    def get_input(self):
-        return self.input
+    def get_input_file(self):
+        return self.input_file
 
 
 # Checks if key is valid
 def is_valid_key(key):
-    if len(key) == 64:    # Length of the public key is 64 characters  
+    if len(key) == 64:    # Length of the public key is 64 characters
         return True
     else:
         print("This key is not valid.")
@@ -76,10 +76,11 @@ def get_malware_name(key, hash):
     params = {'apikey': key, 'resource': hash}
     url = requests.get('https://www.virustotal.com/vtapi/v2/file/report', params=params)   # Send request to VirusTotal
     try:
-        json_response = url.json()   # VirusTotal response convert to json format 
+        json_response = url.json()   # VirusTotal response convert to json format
     except json.decoder.JSONDecodeError as e:
         print(e)
-    print("json: " + str(json_response))   # Print the result of the request to VirusTotal in json format in the console
+    print(str(datetime.datetime.now()) + " json: " + str(json_response))   # Print the result of the request to
+    # VirusTotal in json format in the console
 
     if json_response != []:
         response = int(json_response.get('response_code'))  # Gets the response code
@@ -99,7 +100,7 @@ def get_malware_name(key, hash):
                 # F-Secure
 
                 total = json_response["total"]
-                ranking_malware_by_positives(str(positives), str(total), str(result))
+                ranking_malware_by_positives(str(positives), str(total), str(result))   # Ranking malware
         else:
             print(hash + ' could not be searched. Please try again later.')
             result = None
