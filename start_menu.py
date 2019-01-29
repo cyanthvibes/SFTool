@@ -115,7 +115,7 @@ def scan_malware(window, file_size, single_file, single_folder):
             print('The malware scan has finished: no malware found!' + "\n")
             update_status_mode(window, "The malware scan has finished: no malware found!")
          
-         global case_name
+        global case_name
         directory = case_name
 
         if os.path.exists(directory):
