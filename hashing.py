@@ -97,7 +97,7 @@ def hash_single_file(single_file):
             for key in path_dict.keys():
                 e.write('{}\n'.format(key))
 
-    # If these errors occur while scanning the file, this file will be skipped stopt
+    # If these errors occur while scanning the file, this file will be skipped 
     except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x:
         print(x)
 
@@ -162,9 +162,9 @@ def hash_folder_limited_size(file_size, single_folder):
 # Description of the function is in the summary
 def hashing_without_limitations():
 
-    for drive in drives: # Voor elke schijf in het systeem wordt de loop uitgevoerd
+    for drive in drives: # This will be executed for every drive in the system
 
-        # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
+        # Scans the root and all the files on the drive(s)
         for root, dirs, files in os.walk(drive, topdown=True):
             try:
                 for name in files: # This will be executed for every file on the system
