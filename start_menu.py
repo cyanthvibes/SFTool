@@ -171,7 +171,7 @@ def show_window():
 
     # Layout the design of the GUI
     layout = [
-        [sg.Text('SFTool - Synergy Forensics Triage Tool', size=(31, 2), text_color='blue', font=('Arial', 30))],
+        [sg.Image(filename='SF_logo.png')],
         [sg.Text('Case information', size=(15, 1), font=('Arial', 16, 'bold'))],
         [sg.Text('Case Name:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_CASE_NAME_', font=('Arial', 14))],
         [sg.Text('Start Number:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_START_NUMBER', font=('Arial', 14))],
