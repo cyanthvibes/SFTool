@@ -17,9 +17,9 @@ Summary: - get_pathname_and_hashes function
                 Making a SHA1-hash of the files and storing them in 'malware_hashes.txt'
          - hash_single_file function
                 Getting user input from 'start_menu.py'
-                Making the MD5 hash of the user-selected file 
+                Making the MD5 hash of the user-selected file
                 Storing the file path and MD5 hash in a CSV-file
-                Storing MD-5 hash in a TXT-file
+                Storing MD5 hash in a TXT-file
          - hash_single_folder function
                 Getting user input from 'start_menu.py'
                 Making MD5 hashes of all the files in a user-selected folder
@@ -31,169 +31,185 @@ Summary: - get_pathname_and_hashes function
                 Storing file paths and MD5 hashes in a CSV-file
                 Storing MD5 hashes in a TXT-file
 
-Update: Daan Schellingerhoudt, s1108356
-    -added hash_single_file, hash_single_folder, hash_folder_limited_size
+Update: Daan Schellingerhoudt, S1108356
+    - Added hash_single_file, hash_single_folder, hash_folder_limited_size
 """
 
 import hashlib, os, csv, datetime
 import win32api # pip install pypiwin32
 
-drives = win32api.GetLogicalDriveStrings()  # Berekend het aantal schijven
+drives = win32api.GetLogicalDriveStrings() # Checks how many drives are in the system
 drives = drives = drives.split('\000')[:-1]
 
-# Omschrijving van de functie staat in de summary
+# Description of the function is in the summary
 def get_pathname_and_hashes(file_size):
 
-    file_size = file_size * 1048576 # Conversie van 1 byte naar 1MB
+    file_size = file_size * 1048576 # Conversion from 1 byte to 1MB
 
-    for drive in drives: # Voor elke schijf in het systeem wordt de loop uitgevoerd
+    for drive in drives: # This will be executed for every drive in the system
 
-        for root, dirs, files in os.walk(drive, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
+        # Scans the root and all the files on the drive(s)
+        for root, dirs, files in os.walk(drive, topdown=True):
             try:
-                for name in files: # Voor elk bestand wordt de loop uitgevoerd
-                    time = datetime.datetime.now() # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
+                for name in files: # This will be executed for every file on the system
+                    time = datetime.datetime.now() # Time and date will be logged to the console
                     filename = (os.path.join(root, name))
-                    if os.path.getsize(filename) <= file_size: # Als het bestand kleiner of gelijk is aan de ingevoerde waarde
-                        blocksize = 65536
-                        path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                    # If the file is smaller or as big as the user input
+                    if os.path.getsize(filename) <= file_size:
+                        # Name of the path and MD5 hash will be saved in a dictionary
+                        path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)])
                         print(str(time) + " " + str(path_dict))
 
                         with open('path_and_hash.csv', 'a') as f:
                             writer = csv.writer(f)
-                            for key, value in path_dict.items(): # De items van path_dict (keys en values) worden naar dit bestand toe geschreven
+                            # The items of path_dict (keys en values) will be saved in a text-file
+                            for key, value in path_dict.items():
                                 writer.writerow([key, value])
 
                         with open('system_hashes.txt', 'a') as e:
-                            for key in path_dict.keys(): # Elke key (de hashes) in path_dict worden naar dit bestand toegeschreven
+                            # Every key (the hashes) in path_dict will be saved in a text-file
+                            for key in path_dict.keys():
                                 e.write('{}\n'.format(key))
 
-            except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
+            # If these errors occur while scanning a file, this file will be skipped
+            except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x:
                 print(x)
 
-    return file_size
-
-# Omschrijving van de functie staat in de summary	
+# Description of the function is in the summary
 def hash_single_file(single_file):
 
     filename = single_file
 
     try:
-        time = datetime.datetime.now() # De tijd en datum van het hashen van dit bestand worden gelogd naar de console
-        blocksize = 65536
-        path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(),
-                           filename)])  # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+        time = datetime.datetime.now() # Time and date will be logged to the console
+        # Name of the path and MD5 hash will be saved in a dictionary
+        path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)])
         print(str(time) + " " + str(path_dict))
 
         with open('path_and_hash.csv', 'a') as f:
             writer = csv.writer(f)
-            for key, value in path_dict.items():  # De items (keys en values) worden naar dit bestand toe geschreven
+            # The items of path_dict (keys en values) will be saved in a text-file
+            for key, value in path_dict.items():
                 writer.writerow([key, value])
 
         with open('system_hashes.txt', 'a') as e:
-            for key in path_dict.keys():  # Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+            # Every key (the hashes) in path_dict will be saved in a text-file
+            for key in path_dict.keys():
                 e.write('{}\n'.format(key))
 
-    except (IOError, PermissionError, MemoryError, FileNotFoundError,
-            UnicodeEncodeError) as x:  # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
+    # If these errors occur while scanning a file, this file will be skipped stopt
+    except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x:
         print(x)
 
-# Omschrijving van de functie staat in de summary
+# Description of the function is in the summary
 def hash_single_folder(single_folder):
 
     for root, dirs, files in os.walk(single_folder, topdown=True):
         try:
-            for name in files:  # Voor elk bestand wordt de loop uitgevoerd
-                time = datetime.datetime.now() # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
+            for name in files:  # This will be executed for every file on the system
+                time = datetime.datetime.now() # Time and date will be logged to the console
                 filename = (os.path.join(root, name))
-                blocksize = 65536
-                path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(),
-                                   filename)])  # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                # Name of the path and MD5 hash will be saved in a dictionary
+                path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)])
                 print(str(time) + " " + str(path_dict))
 
                 with open('path_and_hash.csv', 'a') as f:
                     writer = csv.writer(f)
-                    for key, value in path_dict.items():  # De items (keys en values) worden naar dit bestand toe geschreven
+                    # The items of path_dict (keys en values) will be saved in a text-file
+                    for key, value in path_dict.items():
                         writer.writerow([key, value])
 
                 with open('system_hashes.txt', 'a') as e:
-                    for key in path_dict.keys():  # Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                    # Every key (the hashes) in path_dict will be saved in a text-file
+                    for key in path_dict.keys():
                         e.write('{}\n'.format(key))
 
-        except (IOError, PermissionError, MemoryError, FileNotFoundError,
-                UnicodeEncodeError) as x:  # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
+        # If these errors occur while scanning a file, this file will be skipped
+        except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x:
             print(x)
 
-# Omschrijving van de functie staat in de summary
+# Description of the function is in the summary
 def hash_folder_limited_size(file_size, single_folder):
 
-    file_size = file_size * 1048576 # Conversie van 1 byte naar 1MB
+    file_size = file_size * 1048576 # Conversion from 1 byte to 1MB
 
-    for root, dirs, files in os.walk(single_folder, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
+    # Scans the root and all the files on the drive(s)
+    for root, dirs, files in os.walk(single_folder, topdown=True):
         try:
-            for name in files: # Voor elk bestand wordt de loop uitgevoerd
-                time = datetime.datetime.now() # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
+            for name in files: # This will be executed for every file on the system
+                time = datetime.datetime.now() # Time and date will be logged to the console
                 filename = (os.path.join(root, name))
                 if os.path.getsize(filename) <= file_size:
-                    blocksize = 65536
-                    path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                    # Name of the path and MD5 hash will be saved in a dictionary
+                    path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)])
                     print(str(time) + " " + str(path_dict))
 
                     with open('path_and_hash.csv', 'a') as f:
                         writer = csv.writer(f)
-                        for key, value in path_dict.items(): # De items (keys en values) worden naar dit bestand toe geschreven
+                        # The items of path_dict (keys en values) will be saved in a text-file
+                        for key, value in path_dict.items():
                             writer.writerow([key, value])
 
                     with open('system_hashes.txt', 'a') as e:
-                        for key in path_dict.keys(): # Elke key (de hashes) in hash_dict worden naar dit bestand toegeschreven
+                        # Every key (the hashes) in path_dict will be saved in a text-file
+                        for key in path_dict.keys():
                             e.write('{}\n'.format(key))
 
-        except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
+        # If these errors occur while scanning a file, this file will be skipped
+        except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x:
             print(x)
-    
-# Omschrijving van de functie staat in de summary
+
+# Description of the function is in the summary
 def hashing_without_limitations():
+
     for drive in drives: # Voor elke schijf in het systeem wordt de loop uitgevoerd
 
-        for root, dirs, files in os.walk(drive, topdown=True): # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
+        # Scant de root en alle onderliggende mappen en bestanden op de drive(s)
+        for root, dirs, files in os.walk(drive, topdown=True):
             try:
-                for name in files: # Voor elk bestand wordt de loop uitgevoerd
-                    time = datetime.datetime.now() # De tijd en datum van het hashen van elk bestand worden gelogd naar de console
+                for name in files: # This will be executed for every file on the system
+                    time = datetime.datetime.now() # Time and date will be logged to the console
                     filename = (os.path.join(root, name))
-                    blocksize = 65536
-                    path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)]) # De padnaam en de MD5 hash worden opgeslagen in een dictionary
+                    # Name of the path and MD5 hash will be saved in a dictionary
+                    path_dict = dict([(hashlib.md5(open(filename, 'rb').read()).hexdigest(), filename)])
                     print(str(time) + " " + str(path_dict))
 
                     with open('path_and_hash.csv', 'a') as f:
                         writer = csv.writer(f)
-                        for key, value in path_dict.items(): # De items van path_dict(keys en values) worden naar dit bestand toe geschreven
+                        # The items of path_dict (keys en values) will be saved in a text-file
+                        for key, value in path_dict.items():
                             writer.writerow([key, value])
 
                     with open('system_hashes.txt', 'a') as e:
-                        for key in path_dict.keys(): # Elke key in path_dict (de hashes) worden naar dit bestand toegeschreven
+                        for key in path_dict.keys(): # Every key (the hashes) in path_dict will be saved in a text-file
                             e.write('{}\n'.format(key))
 
-            except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x: # Als deze errors voorkomen, dan worden deze bestanden overgeslagen zonder dat het programma stopt
+            # If these errors occur while scanning a file, this file will be skipped
+            except (IOError, PermissionError, MemoryError, FileNotFoundError, UnicodeEncodeError) as x:
                 print(x)
 
-# Omschrijving van de functie staat in de summary
+# Description of the function is in the summary
 def convert_md5_to_sha1():
-    with open('path_and_hash.csv', 'r') as e: # Het bestand met de padnamen en MD5 hashes wordt geopend
-        path_dict = dict(filter(None, csv.reader(e))) # Het CSV-bestand wordt omgezet in een dictionary
+    with open('path_and_hash.csv', 'r') as e: # The file with pathnames and hashes will be opened
+        path_dict = dict(filter(None, csv.reader(e))) # The CSV-file will be transformed in a dictionary
 
-    lines = [line.rstrip('\n') for line in open('virusshare_matches.txt')] # Virusshare matches worden omgezet in list
+    lines = [line.rstrip('\n') for line in open('virusshare_matches.txt')] # Virusshare matches are turned into a list
 
-    for key, value in path_dict.items(): # De loop gaat over alle items in de dictionary
+    for key, value in path_dict.items(): # For all the items in the dictonary (hashes and pathnames)
         hash = key
         padnaam = value
         filename = os.path.join(padnaam)
-        if hash in lines: # Als de hash voorkomt in de dictionary, doe het volgende:
-            checksum = hashlib.sha1(open(filename, 'rb').read()).hexdigest() # Er wordt een SHA1-hash berekend van het bestand in het opgegeven pad
+        if hash in lines: # If a key in the dictionary is the same as a line in Virusshare matches, do this:
+            # A SHA1-hash will be generated of de given pathname
+            checksum = hashlib.sha1(open(filename, 'rb').read()).hexdigest()
             with open('malware_hashes.txt', 'a') as f:  #
-                f.write('{}\n'.format(checksum)) # De SHA1-hashes van geïnfecteerde bestanden worden naar het bestand toe geschreven
+                # The SHA1-hashes of the infected files will be saved in a text-file
+                f.write('{}\n'.format(checksum))
             print(checksum)
 
             with open('malware_sha_path.csv', 'a') as f:
                 writer = csv.writer(f)
-                writer.writerow([checksum, padnaam]) # De SHA1 waarde en de padnaam van de malware worden weggeschreven naar het bestand
+                # The SHA1 hash and pathname of the malware are saved in a CSV-file
+                writer.writerow([checksum, padnaam])
 
     return checksum
