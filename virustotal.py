@@ -69,7 +69,7 @@ def file_exists(filepath):
         print(e)
 
 
-# gets the malware name
+# Gets the malware name
 def get_malware_name(key, hash):
     json_response = []
 
@@ -80,7 +80,7 @@ def get_malware_name(key, hash):
     except json.decoder.JSONDecodeError as e:
         print(e)
     print(str(datetime.datetime.now()) + " json: " + str(json_response))   # Print the result of the request to
-    # VirusTotal in json format in the console
+    # VirusTotal in json format in the console with the current time
 
     if json_response != []:
         response = int(json_response.get('response_code'))  # Gets the response code
@@ -133,3 +133,9 @@ def register_malware_to_database():
                     insert_data_malware_detection(malware)  # Write the malware detection data to the database
 
                 time.sleep(15)  # There is a sleep needed because of the 4 requests per minut to VirusTotal
+
+def main():
+    register_malware_to_database()
+
+if __name__ == '__main__':
+    main()
