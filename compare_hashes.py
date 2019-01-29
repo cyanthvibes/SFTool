@@ -9,16 +9,17 @@ Summary: - compare_hashes
 from database_helper import select_virusshare_hashes_by_system_hash
 
 
-# Omschrijving van de functie staat in de summary
+# Description of the function is in the summary
 def compare_hashes():
     malware_found = False
-    with open('system_hashes.txt', 'r') as hashes: # Opent 'system_hashes.txt'
-        for system_hash in hashes:
+    with open('system_hashes.txt', 'r') as hashes: # Opens 'system_hashes.txt'
+        for system_hash in hashes: # Selects all hashes from the file
             system_hash = system_hash.strip()
+            # Searches for corresponding hashes in the database
             hash_from_database = select_virusshare_hashes_by_system_hash(system_hash)
             if hash_from_database != '':
                 print("Virusshare match: " + str(hash_from_database))
-                with open('virusshare_matches.txt', 'a') as e: # Open het 'virusshare_matches.txt'
+                with open('virusshare_matches.txt', 'a') as e: # Opens the 'virusshare_matches.txt'
                     malware_found = True
-                    e.write('{}\n'.format(hash_from_database)) # Schrijf de overeenkomende hash naar het bestand
+                    e.write('{}\n'.format(hash_from_database)) # Writes the corresponding hash to the file
     return malware_found
