@@ -5,6 +5,7 @@ Summary: - The class Virustotal contains virustotal information: hash (the malwa
          - Checks the key, hash and file if they are valid
          - get_malware_name(): sends a request to VirusTotal. VirusTotal gives a response in json format.
            get_malware_name() gets the malware name of the virusscanner F-Secure.
+         - Writes malware detection information to the database. 
 """
 
 import json
@@ -69,9 +70,9 @@ def file_exists(filepath):
         print(e)
 
 
-# Gets the malware name
+# Gets the malware name defined by F-Secure from VirusTotal
 def get_malware_name(key, hash):
-    json_response = []
+    json_response = []         
 
     params = {'apikey': key, 'resource': hash}
     url = requests.get('https://www.virustotal.com/vtapi/v2/file/report', params=params)   # Send request to VirusTotal
@@ -81,10 +82,10 @@ def get_malware_name(key, hash):
         print(e)
     print(str(datetime.datetime.now()) + " json: " + str(json_response))   # Print the result of the request to
     # VirusTotal in json format in the console with the current time
-
-    if json_response != []:
+            
+    if json_response != []:   
+         # The response appears to be valid  
         response = int(json_response.get('response_code'))  # Gets the response code
-
         if response == 0:
             print(hash + ' is not in Virus Total')
             result = None
@@ -110,7 +111,7 @@ def get_malware_name(key, hash):
     return result
 
 
-# Write malware detection data to the database
+# Writes malware detection data to the database
 def register_malware_to_database():
     input_file = 'malware_hashes.txt'
     file_exists(input_file)
@@ -133,9 +134,3 @@ def register_malware_to_database():
                     insert_data_malware_detection(malware)  # Write the malware detection data to the database
 
                 time.sleep(15)  # There is a sleep needed because of the 4 requests per minut to VirusTotal
-
-def main():
-    register_malware_to_database()
-
-if __name__ == '__main__':
-    main()
