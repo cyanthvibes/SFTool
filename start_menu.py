@@ -3,6 +3,7 @@ Author: Mariska Temming, S1106242
 Summary: - The startmenu is the main of the SFTool
          - It shows the GUI of the SFTool
          - The user could choose three options in the GUI: "Quit", "Create memory dump" and "Start malware scan"
+         - The user could choose to apply filters: choose a limiet file size, choose one file and choose one directory
          - When the user clicks on "Start malware scan", SFTool is scanning the system of availability of malware
          - When the user clicks on "Create memory dump", SFTool runs MagnetRAMCapture
          - When the user clicks on "Quit", the GUI closes
@@ -12,8 +13,8 @@ Update: Daan Schellingerhoudt, s1108356
     -added file and folder scan to the start_menu
 Update: Harjan Redegeld
     -added function: move_created_files_to_directory()
+    -added: logs everything to the console to a text file
 """
-
 
 import PySimpleGUI as sg  # pip install PySimpleGUI
 import datetime
@@ -78,6 +79,7 @@ def move_created_files_to_directory():
     except:
         pass
 
+
 # Update the status mode in the GUI
 def update_status_mode(window, status_mode):
     window.FindElement('_STATUS_').Update(status_mode)
@@ -110,7 +112,8 @@ def scan_malware(window, file_size, single_file, single_folder):
         elif file_size != 0 and single_folder != '':
             print('Calculating hashes... ' + "\n")
             update_status_mode(window, "Calculating hashes... (this might take a while)")
-            hash_folder_limited_size(file_size, single_folder)  # Calculate the md5 hashes of the files on the of the selected folder
+            hash_folder_limited_size(file_size, single_folder)  # Calculate the md5 hashes of the files on the of the
+            #  selected folder 
 
         elif file_size != 0:
             print('Calculating hashes... ' + "\n")
@@ -157,9 +160,9 @@ def scan_malware(window, file_size, single_file, single_folder):
         else:
             print('The malware scan has finished: no malware found!' + "\n")
             update_status_mode(window, "The malware scan has finished: no malware found!")
-         
-         move_created_files_to_directory()
-         
+
+        move_created_files_to_directory()
+
     except Exception as e:
         print(e)
         update_status_mode(window, e)
@@ -172,8 +175,9 @@ def show_window():
     # create buttons
     start_malware = sg.Button('Start malware scan', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'),
                               enable_events=True, )
-    create_memory_dump = sg.Button('Create memory dump', size=(17, 1), font=('Arial', 18), button_color=('black', 'white'),
-                              enable_events=True, )
+    create_memory_dump = sg.Button('Create memory dump', size=(17, 1), font=('Arial', 18),
+                                   button_color=('black', 'white'),
+                                   enable_events=True, )
     quit_startmenu = sg.Button('Quit', size=(5, 1), font=('Arial', 18), button_color=('black', 'white'))
 
     # Layout the design of the GUI
@@ -181,14 +185,19 @@ def show_window():
         [sg.Image(filename='SF_logo.png')],
         [sg.Text('Case information', size=(15, 1), font=('Arial', 16, 'bold'))],
         [sg.Text('Case Name:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_CASE_NAME_', font=('Arial', 14))],
-        [sg.Text('Start Number:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_START_NUMBER', font=('Arial', 14))],
-        [sg.Text('Investigator:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_INVESTIGATOR_', font=('Arial', 14))],
+        [sg.Text('Start Number:', size=(15, 1), font=('Arial', 14)),
+         sg.InputText(key='_START_NUMBER', font=('Arial', 14))],
+        [sg.Text('Investigator:', size=(15, 1), font=('Arial', 14)),
+         sg.InputText(key='_INVESTIGATOR_', font=('Arial', 14))],
         [sg.Text('Comment:', size=(15, 1), font=('Arial', 14)), sg.InputText(key='_COMMENT_', font=('Arial', 14))],
         [empty_row],
         [sg.Text('Filters', size=(15, 1), font=('Arial', 16, 'bold'))],
-        [sg.Text('File Size Limit (MB):', size=(15,1), font=('Arial', 14)), sg.InputText(key='_FILE_SIZE_', font=('Arial', 14))],
-        [sg.FileBrowse(key='_FILE_NAME_', font=('Arial', 14), size=(15, 1)), sg.InputText('Select single file to scan', font=('Arial', 14))],
-        [sg.FolderBrowse(key='_FILE_FOLDER_', font=('Arial', 14), size=(15, 1)), sg.InputText('Select single folder to scan', font=('Arial', 14))],
+        [sg.Text('File Size Limit (MB):', size=(15, 1), font=('Arial', 14)),
+         sg.InputText(key='_FILE_SIZE_', font=('Arial', 14))],
+        [sg.FileBrowse(key='_FILE_NAME_', font=('Arial', 14), size=(15, 1)),
+         sg.InputText('Select single file to scan', font=('Arial', 14))],
+        [sg.FolderBrowse(key='_FILE_FOLDER_', font=('Arial', 14), size=(15, 1)),
+         sg.InputText('Select single folder to scan', font=('Arial', 14))],
         [empty_row],
         [sg.Text('Status: ', size=(15, 1), font=('Arial', 14)), status_mode],
         [empty_row],
@@ -200,7 +209,7 @@ def show_window():
     window = sg.Window('SFT - Start menu').Layout(layout)  # Shows the window to the user
 
     while True:
-        event, value = window.Read() # Read the Window
+        event, value = window.Read()  # Read the Window
         # Take appropriate action based on button
         if event == 'Create memory dump':
             creating_memory_dump(window)
@@ -227,19 +236,21 @@ def show_window():
                 sg.Popup("Please fill in a number for the file size(MB)")
                 print("Please fill in a number for the file size(MB)")
 
+            # Else if single file is not empty and simple folder is not empty, then show a pop up
             elif single_file != '' and single_folder != '':
                 sg.Popup("Please select only one of the following options: 'Select single file "
                          "to scan' or ' Select single folder to scan'")
                 print("Please select only one of the following options: 'Select single file "
                       "to scan' or ' Select single folder to scan'")
 
+            # Else if file size is not empty and simple file is not empty, then show a pop up
             elif file_size != '' and single_file != '':
                 sg.Popup("It is not possible to select a file size while scanning a single file")
                 print("It is not possible to select a file size while scanning a single file")
 
             # Else start the malware scan
             else:
-                if file_size == '':     # If file size is not filled by the user then file size = 0 (scan whole system)
+                if file_size == '':  # If file size is not filled by the user then file size = 0 (scan whole system)
                     file_size = 0
 
                 file_size = int(file_size)
