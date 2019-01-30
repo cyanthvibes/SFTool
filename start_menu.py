@@ -10,6 +10,8 @@ Summary: - The startmenu is the main of the SFTool
 Update: Daan Schellingerhoudt, s1108356
     -added creating_memory_dump
     -added file and folder scan to the start_menu
+Update: Harjan Redegeld
+    -added function: move_created_files_to_directory()
 """
 
 
@@ -34,6 +36,47 @@ from malware_copy import malware_copy
 # Logs everything from the console to a text file
 sys.stdout = open('console_log.txt', 'w')
 case_name = ''
+
+
+# Moves created files to a direcory with the case name as the name of the directory 
+def move_created_files_to_directory():
+    global case_name
+    directory = case_name
+
+    if os.path.exists(directory):
+        case_name += '_duplicate'
+        directory = case_name
+
+    os.mkdir(directory)
+    try:
+        shutil.move('malware_copies', directory)
+    except:
+        pass
+
+    try:
+        shutil.move('system_hashes.txt', directory)
+    except:
+        pass
+
+    try:
+        shutil.move('path_and_hash.csv', directory)
+    except:
+        pass
+
+    try:
+        shutil.move('virusshare_matches.txt', directory)
+    except:
+        pass
+
+    try:
+        shutil.move('malware_hashes.txt', directory)
+    except:
+        pass
+
+    try:
+        shutil.move('malware_sha_hashes.csv', directory)
+    except:
+        pass
 
 # Update the status mode in the GUI
 def update_status_mode(window, status_mode):
@@ -115,43 +158,7 @@ def scan_malware(window, file_size, single_file, single_folder):
             print('The malware scan has finished: no malware found!' + "\n")
             update_status_mode(window, "The malware scan has finished: no malware found!")
          
-        global case_name
-        directory = case_name
-
-        if os.path.exists(directory):
-            case_name += '_duplicate'
-            directory = case_name
-
-        os.mkdir(directory)
-        try:
-            shutil.move('malware_copies', directory)
-        except:
-            pass
-
-        try:
-            shutil.move('system_hashes.txt', directory)
-        except:
-            pass
-
-        try:
-            shutil.move('path_and_hash.csv', directory)
-        except:
-            pass
-
-        try:
-            shutil.move('virusshare_matches.txt', directory)
-        except:
-            pass
-
-        try:
-            shutil.move('malware_hashes.txt', directory)
-        except:
-            pass
-
-        try:
-            shutil.move('malware_sha_hashes.csv', directory)
-        except:
-            pass
+         move_created_files_to_directory()
          
     except Exception as e:
         print(e)
