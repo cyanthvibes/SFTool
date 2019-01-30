@@ -75,7 +75,17 @@ def move_created_files_to_directory():
         pass
 
     try:
-        shutil.move('malware_sha_hashes.csv', directory)
+        shutil.move('malware_sha_path.csv', directory)
+    except:
+        pass
+
+    try:
+        shutil.move('console_log_{}'.format(case_name), directory)
+    except:
+        pass
+
+    try:
+        shutil.move('found_malware.txt', directory)
     except:
         pass
 
@@ -161,7 +171,11 @@ def scan_malware(window, file_size, single_file, single_folder):
             print('The malware scan has finished: no malware found!' + "\n")
             update_status_mode(window, "The malware scan has finished: no malware found!")
 
+        sys.stdout.close()
+        os.rename('console_log.txt', 'console_log_{}'.format(case_name))
         move_created_files_to_directory()
+
+
 
     except Exception as e:
         print(e)
@@ -215,6 +229,7 @@ def show_window():
             creating_memory_dump(window)
 
         elif event == 'Start malware scan':
+            global case_name
             case_name = value['_CASE_NAME_']
             start_number = value['_START_NUMBER']
             investigator_name = value['_INVESTIGATOR_']

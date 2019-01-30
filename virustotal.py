@@ -15,9 +15,9 @@ import time
 import datetime
 import csv
 
-from SFTool.malware import Malware
-from SFTool.database_helper import insert_data_malware_detection
-from SFTool.ranking_malware import ranking_malware_by_positives
+from malware import Malware
+from database_helper import insert_data_malware_detection
+from ranking_malware import ranking_malware_by_positives
 
 
 class Virustotal:
