@@ -1,3 +1,0 @@
-Amount of hashfiles combined into virusshare_hashes.txt: 338
-(VirusShare_00000.md5.txt - VirusShare_00337.md5.txt)
-Executed in: 38.66291522979736 seconds.
