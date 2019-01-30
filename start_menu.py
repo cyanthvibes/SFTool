@@ -80,7 +80,7 @@ def move_created_files_to_directory():
         pass
 
     try:
-        shutil.move('console_log_{}'.format(case_name), directory)
+        shutil.move('console_log_{}.txt'.format(case_name), directory)
     except:
         pass
 
