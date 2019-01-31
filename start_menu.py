@@ -172,7 +172,7 @@ def scan_malware(window, file_size, single_file, single_folder):
             update_status_mode(window, "The malware scan has finished: no malware found!")
 
         sys.stdout.close()
-        os.rename('console_log.txt', 'console_log_{}'.format(case_name))
+        os.rename('console_log.txt', 'console_log_{}.txt'.format(case_name))
         move_created_files_to_directory()
 
 
